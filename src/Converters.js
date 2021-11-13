@@ -1,5 +1,4 @@
 import React from "react";
-import { Picker } from "@react-native-picker/picker";
 import * as checks from "./check";
 import { Address, Balance } from "@elrondnetwork/erdjs/out";
 
@@ -11,133 +10,212 @@ const Converters = () => {
   const [input, setInput] = React.useState("");
   const [output, setOutput] = React.useState("");
 
+  // let displayableResults = [];
+  const [displayableResults, setDisplayableResults] = React.useState([]);
+
   const [isResultVisible, setIsResultVisible] = React.useState(false);
 
+  const createResult = (msg, result) => {
+    return (
+      <div>
+        If you wanted to {msg}, here is your result:
+        <p style={{ marginLeft: "30px", fontWeight: "bold" }}>{result} </p>
+      </div>
+    );
+  };
+
+  const displayPossibleResults = () => {
+    return (
+      <div>
+        {displayableResults.map((result) =>
+          createResult(result.id, result.value)
+        )}
+      </div>
+    );
+  };
+
   const convert = () => {
-    switch (selectedConvertor) {
-      case "bech32ToHex":
-        if (checks.bech32Address(input)) {
-          const result = new Address(input).hex();
+    console.log("converting...");
+    //setDisplayableResults([]);
+    console.log(input);
+    if (checks.bech32Address(input)) {
+      const result = new Address(input).hex();
 
-          setOutput(result);
-        }
-        break;
-      case "hexToBech32":
-        if (checks.hexAddress(input)) {
-          const result = new Address(input).bech32();
+      displayableResults.push({ id: "bech32ToHex", value: result });
 
-          setOutput(result);
-        }
-        break;
-      case "decimalToHexa":
-        if (checks.decimal(input)) {
-          let result = parseInt(input, 10).toString(16);
-
-          if (result.length % 2 === 1) {
-            result = "0" + result;
-          }
-
-          setOutput(result);
-        }
-
-        break;
-      case "hexaToDecimal":
-        if (checks.hexadecimal(input)) {
-          const result = parseInt(input, 16);
-
-          setOutput(result);
-        }
-
-        break;
-      case "decimalToBase64":
-        if (checks.decimal(input)) {
-          const result = Buffer.from(input, "ascii").toString("base64");
-
-          setOutput(result);
-        }
-
-        break;
-      case "base64ToDecimal":
-        if (checks.base64Value(input)) {
-          const result = Buffer.from(input, "base64").toString("ascii");
-
-          setOutput(result);
-        }
-
-        break;
-      case "amountToDenominatedAmount":
-        if (checks.amount(input)) {
-          const result = Balance.egld(input).toString();
-
-          setOutput(result);
-        }
-
-        break;
-      case "denominatedAmountToAmount":
-        if (checks.denominatedAmount(input)) {
-          const result = Balance.fromString(input).toCurrencyString();
-
-          setOutput(result);
-        }
-
-        break;
-      case "stringToHexadecimal":
-        if (checks.stringValue(input)) {
-          const result = Buffer.from(input, "ascii").toString("hex");
-
-          setOutput(result);
-        }
-
-        break;
-      case "hexadecimalEncodedStringToString":
-        if (checks.hexaEncodedString(input)) {
-          const result = Buffer.from(input, "hex").toString("utf8");
-
-          setOutput(result);
-        }
-
-        break;
-      case "stringToBase64EncodedString":
-        if (checks.stringValue(input)) {
-          const result = Buffer.from(input, "ascii").toString("base64");
-
-          setOutput(result);
-        }
-
-        break;
-      case "base64EncodedStringToString":
-        if (checks.base64EncodedString(input)) {
-          const result = Buffer.from(input, "base64").toString("ascii");
-
-          setOutput(result);
-        }
-
-        break;
-      case "hexadecimalEncodedStringToBase64EncodedString":
-        if (checks.hexaEncodedString(input)) {
-          const result = Buffer.from(input, "hex").toString("base64");
-
-          setOutput(result);
-        }
-
-        break;
-      case "base64EncodedStringToHexadecimalEncodedString":
-        if (checks.base64EncodedString(input)) {
-          const result = Buffer.from(input, "base64").toString("hex");
-
-          setOutput(result);
-        }
-
-        break;
-
-      default:
-        console.log("Invalid Converting type");
+      //console.log(displayableResults);
     }
 
-    if (checks.errorMessage !== "") {
-      setOutput(checks.errorMessage);
+    if (checks.hexAddress(input)) {
+      const result = new Address(input).bech32();
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "hexToBech32", value: result },
+      ]);
+
+      //console.log(displayableResults);
     }
 
+    if (checks.decimal(input)) {
+      let result = parseInt(input, 10).toString(16);
+
+      if (result.length % 2 === 1) {
+        result = "0" + result;
+      }
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "decimalToHexa", value: result },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.hexadecimal(input)) {
+      const result = parseInt(input, 16);
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "hexaToDecimal", value: result },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.decimal(input)) {
+      const result = Buffer.from(input, "ascii").toString("base64");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "decimalToBase64", value: result },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.base64Value(input)) {
+      const result = Buffer.from(input, "base64").toString("ascii");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "base64ToDecimal", value: result },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.amount(input)) {
+      const result = Balance.egld(input).toString();
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "amountToDenominatedAmount",
+          value: result,
+        },
+      ]);
+      //console.log(displayableResults);
+    }
+
+    if (checks.denominatedAmount(input)) {
+      const result = Balance.fromString(input).toCurrencyString();
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "denominatedAmountToAmount",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.stringValue(input)) {
+      const result = Buffer.from(input, "ascii").toString("hex");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "stringToHexadecimal",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.hexaEncodedString(input)) {
+      const result = Buffer.from(input, "hex").toString("utf8");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "hexadecimalEncodedStringToString",
+          value: result,
+        },
+      ]);
+      //console.log(displayableResults);
+    }
+
+    if (checks.stringValue(input)) {
+      const result = Buffer.from(input, "ascii").toString("base64");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "stringToBase64EncodedString",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.base64EncodedString(input)) {
+      const result = Buffer.from(input, "base64").toString("ascii");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "base64EncodedStringToString",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.hexaEncodedString(input)) {
+      const result = Buffer.from(input, "hex").toString("base64");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "hexadecimalEncodedStringToBase64EncodedString",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    if (checks.base64EncodedString(input)) {
+      const result = Buffer.from(input, "base64").toString("hex");
+
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        {
+          id: "base64EncodedStringToHexadecimalEncodedString",
+          value: result,
+        },
+      ]);
+
+      //console.log(displayableResults);
+    }
+
+    displayPossibleResults();
     setIsResultVisible(true);
   };
 
@@ -209,10 +287,10 @@ const Converters = () => {
       <div>
         <label>Choose Converter Type</label>
 
-        <div>
+        {/* <div>
           <h4>Convert {selectedLabel}</h4>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <Picker
             selectedValue={selectedConvertor}
             onValueChange={(itemValue, itemIndex) => {
@@ -228,16 +306,18 @@ const Converters = () => {
               );
             })}
           </Picker>
-        </div>
+        </div> */}
         <div>
           <input
             size="80"
             value={input}
             onChange={(event) => {
               setInput(event.target.value.toString());
+              setDisplayableResults([]);
+              convert();
             }}
           ></input>
-          <button
+          {/* <button
             onClick={convert}
             style={{
               marginTop: "7px",
@@ -247,10 +327,11 @@ const Converters = () => {
             }}
           >
             Convert
-          </button>
+          </button> */}
         </div>
-        <div style={{ display: isResultVisible ? "block" : "none" }}>
-          Result :<div style={{ paddingLeft: "30px" }}>{output}</div>
+        <div>
+          {/* Result :<div style={{ paddingLeft: "30px" }}>{output}</div> */}
+          {displayPossibleResults()}
         </div>
       </div>
     </div>

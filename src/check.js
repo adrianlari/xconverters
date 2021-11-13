@@ -54,7 +54,7 @@ export const stringValue = (input) => {
 };
 
 export const hexaEncodedString = (input) => {
-  return true;
+  return input.length % 2 === 0;
 };
 
 export const base64EncodedString = (input) => {
