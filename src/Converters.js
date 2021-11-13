@@ -3,17 +3,9 @@ import * as checks from "./check";
 import { Address, Balance } from "@elrondnetwork/erdjs/out";
 
 const Converters = () => {
-  const [selectedConvertor, setSelectedConvertor] = React.useState(
-    "bech32ToHex"
-  );
-  const [selectedLabel, setSelectedLabel] = React.useState("Bech32 to Hex");
   const [input, setInput] = React.useState("");
-  const [output, setOutput] = React.useState("");
 
-  // let displayableResults = [];
   const [displayableResults, setDisplayableResults] = React.useState([]);
-
-  const [isResultVisible, setIsResultVisible] = React.useState(false);
 
   const createResult = (msg, result) => {
     return (
@@ -34,16 +26,11 @@ const Converters = () => {
     );
   };
 
-  const convert = () => {
-    console.log("converting...");
-    //setDisplayableResults([]);
-    console.log(input);
+  const convert = (input) => {
     if (checks.bech32Address(input)) {
       const result = new Address(input).hex();
 
       displayableResults.push({ id: "bech32ToHex", value: result });
-
-      //console.log(displayableResults);
     }
 
     if (checks.hexAddress(input)) {
@@ -53,8 +40,6 @@ const Converters = () => {
         ...oldArray,
         { id: "hexToBech32", value: result },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.decimal(input)) {
@@ -68,8 +53,6 @@ const Converters = () => {
         ...oldArray,
         { id: "decimalToHexa", value: result },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.hexadecimal(input)) {
@@ -79,8 +62,6 @@ const Converters = () => {
         ...oldArray,
         { id: "hexaToDecimal", value: result },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.decimal(input)) {
@@ -90,8 +71,6 @@ const Converters = () => {
         ...oldArray,
         { id: "decimalToBase64", value: result },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.base64Value(input)) {
@@ -101,8 +80,6 @@ const Converters = () => {
         ...oldArray,
         { id: "base64ToDecimal", value: result },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.amount(input)) {
@@ -115,7 +92,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-      //console.log(displayableResults);
     }
 
     if (checks.denominatedAmount(input)) {
@@ -128,8 +104,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.stringValue(input)) {
@@ -142,8 +116,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.hexaEncodedString(input)) {
@@ -156,7 +128,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-      //console.log(displayableResults);
     }
 
     if (checks.stringValue(input)) {
@@ -169,8 +140,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.base64EncodedString(input)) {
@@ -183,8 +152,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.hexaEncodedString(input)) {
@@ -197,8 +164,6 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     if (checks.base64EncodedString(input)) {
@@ -211,12 +176,9 @@ const Converters = () => {
           value: result,
         },
       ]);
-
-      //console.log(displayableResults);
     }
 
     displayPossibleResults();
-    setIsResultVisible(true);
   };
 
   const converters = [
@@ -287,52 +249,19 @@ const Converters = () => {
       <div>
         <label>Choose Converter Type</label>
 
-        {/* <div>
-          <h4>Convert {selectedLabel}</h4>
-        </div> */}
-        {/* <div>
-          <Picker
-            selectedValue={selectedConvertor}
-            onValueChange={(itemValue, itemIndex) => {
-              setSelectedConvertor(itemValue);
-              setSelectedLabel(converters[itemIndex].label);
-              setInput("");
-              setIsResultVisible(false);
-            }}
-          >
-            {converters.map((converter) => {
-              return (
-                <Picker.Item label={converter.label} value={converter.value} />
-              );
-            })}
-          </Picker>
-        </div> */}
         <div>
           <input
             size="80"
             value={input}
             onChange={(event) => {
-              setInput(event.target.value.toString());
+              setInput(event.target.value);
               setDisplayableResults([]);
-              convert();
+
+              convert(event.target.value);
             }}
           ></input>
-          {/* <button
-            onClick={convert}
-            style={{
-              marginTop: "7px",
-              borderRadius: "7px",
-              backgroundColor: "blue",
-              color: "white",
-            }}
-          >
-            Convert
-          </button> */}
         </div>
-        <div>
-          {/* Result :<div style={{ paddingLeft: "30px" }}>{output}</div> */}
-          {displayPossibleResults()}
-        </div>
+        <div>{displayPossibleResults()}</div>
       </div>
     </div>
   );

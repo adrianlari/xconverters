@@ -42,11 +42,11 @@ export const base64Value = (input) => {
 };
 
 export const amount = (input) => {
-  return true;
+  return !isNaN(input);
 };
 
 export const denominatedAmount = (input) => {
-  return true;
+  return !isNaN(input);
 };
 
 export const stringValue = (input) => {
