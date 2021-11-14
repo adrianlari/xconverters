@@ -6,9 +6,6 @@ const App = () => {
     <div>
       <div>
         <div>
-          <h2>Converters</h2>
-        </div>
-        <div>
           <Converters />
         </div>
       </div>

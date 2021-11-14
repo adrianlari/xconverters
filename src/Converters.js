@@ -5,22 +5,15 @@ import { Address, Balance } from "@elrondnetwork/erdjs/out";
 const Converters = () => {
   const [input, setInput] = React.useState("");
 
-  const [displayableResults, setDisplayableResults] = React.useState([]);
+  let [counter, setCounter] = React.useState(0);
 
-  const createResult = (msg, result) => {
-    return (
-      <div>
-        If you wanted to {msg}, here is your result:
-        <p style={{ marginLeft: "30px", fontWeight: "bold" }}>{result} </p>
-      </div>
-    );
-  };
+  const [displayableResults, setDisplayableResults] = React.useState([]);
 
   const displayPossibleResults = () => {
     return (
       <div>
         {displayableResults.map((result) =>
-          createResult(result.id, result.value)
+          convertedItem(result.id, result.value)
         )}
       </div>
     );
@@ -30,7 +23,10 @@ const Converters = () => {
     if (checks.bech32Address(input)) {
       const result = new Address(input).hex();
 
-      displayableResults.push({ id: "bech32ToHex", value: result });
+      setDisplayableResults((oldArray) => [
+        ...oldArray,
+        { id: "bech32ToHex", value: result },
+      ]);
     }
 
     if (checks.hexAddress(input)) {
@@ -240,28 +236,108 @@ const Converters = () => {
     },
   ];
 
-  return (
-    <div
-      id="addresses"
-      style={{ backgroundColor: "lightgray", width: "700px" }}
-    >
-      <div>Address convertors</div>
-      <div>
-        <label>Choose Converter Type</label>
+  const copyToCliboard = (text) => {
+    navigator.clipboard.writeText(text);
+  };
 
-        <div>
-          <input
-            size="80"
-            value={input}
-            onChange={(event) => {
-              setInput(event.target.value);
-              setDisplayableResults([]);
+  const convertedItem = (msg, result) => {
+    const label = converters.map((pair) => {
+      if (pair.value === msg) return pair.label;
+    });
 
-              convert(event.target.value);
-            }}
-          ></input>
+    return (
+      <div className="row py-3 border-bottom detail-item " key={counter++}>
+        <div className="col-lg-5 text-secondary text-lg-right pl-lg-spacer">
+          {label}
         </div>
-        <div>{displayPossibleResults()}</div>
+        <div className="col pr-lg-spacer">
+          <div className="d-flex align-items-center text-break-all">
+            {result}
+            <a onClick={() => copyToCliboard(result)} className="side-action ">
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                data-prefix="far"
+                data-icon="check"
+                className="svg-inline--fa fa-check fa-w-16 "
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  fill="currentColor"
+                  d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"
+                ></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      <div className="main-search-container py-spacer">
+        <div className="container py-3">
+          <div className="row">
+            <div className="col-12 text-center">
+              <h1 className="mb-4">The Elrond Converters</h1>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12 col-lg-9 mx-auto">
+              <form className="main-search w-100 d-flex">
+                <div className="input-group input-group-seamless">
+                  <input
+                    type="text"
+                    value={input}
+                    className="form-control border-0 rounded-pill py-3 pl-3 pl-lg-4 text-truncate"
+                    placeholder="Insert a value to be converted."
+                    onChange={(event) => {
+                      setInput(event.target.value);
+                      setDisplayableResults([]);
+                      setCounter(0);
+                      convert(event.target.value);
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+          <div>
+            <div className="container page-content">
+              <div className="row">
+                <div className="col-10" style={{ marginLeft: "8%" }}>
+                  <div className="transaction-info card">
+                    <div className="card-header status-text-success">
+                      <div className="card-header-item d-flex align-items-center">
+                        <a className="tab-link mr-3 active nav-link">
+                          Possible Conversions
+                        </a>
+                      </div>
+                    </div>
+                    <div className="card-body p-0">
+                      <div className="container-fluid">
+                        <div className="tab-content">
+                          <div
+                            id="transaction-tabs-tabpane-details"
+                            aria-labelledby="transaction-tabs-tab-details"
+                            role="tabpanel"
+                            aria-hidden="false"
+                            className="fade tab-pane active show"
+                          >
+                            <div>{displayPossibleResults()}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
