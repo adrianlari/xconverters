@@ -21,21 +21,31 @@ const Converters = () => {
 
   const convert = (input) => {
     if (checks.bech32Address(input)) {
-      const result = new Address(input).hex();
+      let result;
+      try {
+        result = new Address(input).hex();
+      } catch {}
 
-      setDisplayableResults((oldArray) => [
-        ...oldArray,
-        { id: "bech32ToHex", value: result },
-      ]);
+      if (result) {
+        setDisplayableResults((oldArray) => [
+          ...oldArray,
+          { id: "bech32ToHex", value: result },
+        ]);
+      }
     }
 
     if (checks.hexAddress(input)) {
-      const result = new Address(input).bech32();
+      let result;
+      try {
+        result = new Address(input).bech32();
+      } catch {}
 
-      setDisplayableResults((oldArray) => [
-        ...oldArray,
-        { id: "hexToBech32", value: result },
-      ]);
+      if (result) {
+        setDisplayableResults((oldArray) => [
+          ...oldArray,
+          { id: "hexToBech32", value: result },
+        ]);
+      }
     }
 
     if (checks.decimal(input)) {
@@ -243,6 +253,7 @@ const Converters = () => {
   const convertedItem = (msg, result) => {
     const label = converters.map((pair) => {
       if (pair.value === msg) return pair.label;
+      return "";
     });
 
     return (
@@ -253,13 +264,17 @@ const Converters = () => {
         <div className="col pr-lg-spacer">
           <div className="d-flex align-items-center text-break-all">
             {result}
-            <a onClick={() => copyToCliboard(result)} className="side-action ">
+            <a
+              href="#"
+              onClick={() => copyToCliboard(result)}
+              className="side-action "
+            >
               <svg
                 aria-hidden="true"
                 focusable="false"
                 data-prefix="far"
                 data-icon="check"
-                className="svg-inline--fa fa-check fa-w-16 "
+                className="svg-inline--fa fa-clone fa-w-16 "
                 role="img"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -308,13 +323,14 @@ const Converters = () => {
           <div>
             <div className="container page-content">
               <div className="row">
-                <div className="col-10" style={{ marginLeft: "8%" }}>
+                <div className="col-9" style={{ marginLeft: "12.5%" }}>
                   <div className="transaction-info card">
-                    <div className="card-header status-text-success">
+                    <div
+                      className="card-header status-text-success"
+                      style={{ backgroundColor: "transparent" }}
+                    >
                       <div className="card-header-item d-flex align-items-center">
-                        <a className="tab-link mr-3 active nav-link">
-                          Possible Conversions
-                        </a>
+                        <span>Possible Conversions</span>
                       </div>
                     </div>
                     <div className="card-body p-0">
