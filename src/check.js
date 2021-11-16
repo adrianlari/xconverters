@@ -17,7 +17,10 @@ export const hexAddress = (input) => {
 };
 
 export const decimal = (input) => {
-  if (parseInt(input, 10).toString(10) !== input) {
+  if (
+    parseInt(input, 10).toString(10) !== input &&
+    parseInt(input, 10) !== input
+  ) {
     return false;
   }
 
@@ -25,7 +28,10 @@ export const decimal = (input) => {
 };
 
 export const hexadecimal = (input) => {
-  if (parseInt(input, 16).toString(16) !== input) {
+  if (
+    parseInt(input, 16).toString(16) !== input &&
+    parseInt(input, 16) !== input
+  ) {
     return false;
   }
 
@@ -45,6 +51,10 @@ export const denominatedAmount = (input) => {
 };
 
 export const stringValue = (input) => {
+  if (input.toString() !== input) {
+    return false;
+  }
+
   return true;
 };
 

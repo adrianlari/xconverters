@@ -1,12 +1,12 @@
 import "./App.css";
-import Converters from "./Converters";
+import ConvertersHandler from "./ConvertersHandler";
 
 const App = () => {
   return (
     <div>
       <div>
         <div>
-          <Converters />
+          <ConvertersHandler />
         </div>
       </div>
     </div>
