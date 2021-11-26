@@ -50,11 +50,11 @@ export const converters = [
     value: ConversionTypes.base64ToString,
   },
   {
-    label: "Hexadecimal => Base64",
+    label: "Hex => Base64",
     value: ConversionTypes.hexadecimalToBase64,
   },
   {
-    label: "Base64 => Hexadecimal",
+    label: "Base64 => Hex",
     value: ConversionTypes.base64ToHexadecimal,
   },
 ];

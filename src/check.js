@@ -28,10 +28,7 @@ export const decimal = (input) => {
 };
 
 export const hexadecimal = (input) => {
-  if (
-    parseInt(input, 16).toString(16) !== input &&
-    parseInt(input, 16) !== input
-  ) {
+  if (!Boolean(input.match("^[A-Fa-f0-9]+$"))) {
     return false;
   }
 
@@ -51,15 +48,15 @@ export const denominatedAmount = (input) => {
 };
 
 export const stringValue = (input) => {
-  if (input.toString() !== input) {
+  return Boolean(input.match("^[A-Za-z0-9]+$"));
+};
+
+export const hexaEncodedString = (input) => {
+  if (!Boolean(input.match("^[A-Fa-f0-9]+$")) || input.length % 2 !== 0) {
     return false;
   }
 
   return true;
-};
-
-export const hexaEncodedString = (input) => {
-  return input.length % 2 === 0;
 };
 
 export const base64EncodedString = (input) => {
