@@ -15,3 +15,62 @@
 .card-header {
   background-color: red;
 }
+
+summary {
+  display: block;
+}
+
+summary::marker {
+  display: none;
+}
+
+summary::-moz-list-bullet {
+  list-style-type: none;
+  display: none;
+}
+
+details > summary::after {
+  content: " ";
+  border: solid #939faa;
+  border-width: 0 5px 5px 0;
+  display: inline-block;
+  padding: 0 10px 10px 0;
+  transform: rotate(-45deg);
+  position: absolute;
+  margin-top: -4%;
+  margin-right: -10%;
+}
+
+details[open] > summary::after {
+  content: " ";
+  border: solid #939faa;
+  border-width: 0 5px 5px 0;
+  display: inline-block;
+  padding: 0 10px 10px 0;
+  transform: rotate(45deg);
+}
+
+.arrow {
+  border: solid rgb(255, 255, 255);
+  border-width: 0 3px 3px 0;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  margin-right: 3%;
+  cursor: pointer;
+}
+
+.arrow.left::selection {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}

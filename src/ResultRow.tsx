@@ -12,7 +12,7 @@ const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
   };
 
   return (
-    <div style={{ visibility: isMain ? "visible" : "collapse" }}>
+    <div style={{ display: isMain ? "" : "" }}>
       <div className="row py-3 border-bottom detail-item">
         <div className="col-lg-5 text-secondary text-lg-right pl-lg-spacer">
           {label}
@@ -37,6 +37,7 @@ const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
                 ></path>
               </svg>
             </a>
+            {/* {isMain ? <i className="arrow left"></i> : ""} */}
           </div>
         </div>
       </div>

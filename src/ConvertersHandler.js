@@ -24,18 +24,36 @@ const ConvertersHandler = () => {
     );
   };
 
+  const hasNoDisplayableResults = (input) => {
+    return (
+      displayableResults.filter((result) => result.input === input).length === 0
+    );
+  };
+
   const displayPossibleResults = (input) => {
     return (
       <div>
-        {displayableResults
-          .filter((result) => result.input === input)
-          .map((result) => {
-            if (isBestResult(result, input)) {
-              return convertedItem(result.id, result.resultValue, true);
-            } else {
-              return convertedItem(result.id, result.resultValue, false);
-            }
-          })}
+        <details>
+          {displayableResults
+            .filter((result) => result.input === input)
+            .map((result) => {
+              if (isBestResult(result, input)) {
+                return (
+                  <summary>
+                    <div>
+                      {convertedItem(result.id, result.resultValue, true)}
+                    </div>
+                  </summary>
+                );
+              } else {
+                return (
+                  <div>
+                    {convertedItem(result.id, result.resultValue, false)}
+                  </div>
+                );
+              }
+            })}
+        </details>
       </div>
     );
   };
@@ -50,6 +68,7 @@ const ConvertersHandler = () => {
       return (
         <div>
           {inputArray.map((word) => {
+            //convertWord(word);
             hexConversions(word);
             return displayBlock(word);
           })}
@@ -59,6 +78,8 @@ const ConvertersHandler = () => {
   };
 
   const displayBlock = (word) => {
+    if (!word || hasNoDisplayableResults(word)) return;
+
     return (
       <div style={{ marginTop: "2%" }} key={divCounter++}>
         <div className="container page-content">
@@ -168,10 +189,7 @@ const ConvertersHandler = () => {
     if (!result) return "";
 
     return (
-      <div
-        key={divCounter++}
-        style={{ visibility: isMain ? "visible" : "collapse" }}
-      >
+      <div key={divCounter++}>
         <ResultRow label={label} result={result} isMain={isMain} />
       </div>
     );
@@ -378,7 +396,7 @@ const ConvertersHandler = () => {
               </form>
             </div>
           </div>
-          <div style={{ display: isVisible ? "block" : "none" }}>
+          <div style={{ display: isVisible ? "inline" : "none" }}>
             <div>{displayConversion()}</div>
 
             {/*Incearaca sa pui blocul intr o componenta si sa aiba props currentWord / displayableResult */}
