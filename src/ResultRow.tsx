@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ResultRowParams {
   label: string;
   result: string;
@@ -37,7 +35,6 @@ const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
                 ></path>
               </svg>
             </a>
-            {/* {isMain ? <i className="arrow left"></i> : ""} */}
           </div>
         </div>
       </div>
