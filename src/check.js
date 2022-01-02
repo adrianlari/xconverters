@@ -48,7 +48,7 @@ export const denominatedAmount = (input) => {
 };
 
 export const stringValue = (input) => {
-  return Boolean(input.match("^[A-Za-z0-9]+$"));
+  return Boolean(input.match("^[A-Za-z0-9-]+$"));
 };
 
 export const hexaEncodedString = (input) => {
