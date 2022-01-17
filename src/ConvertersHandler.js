@@ -7,12 +7,9 @@ import ResultRow from "./ResultRow";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
-  // const [currentConversion, setCurrentConversion] = React.useState("");
   const [isVisible, setIsVisible] = React.useState(false);
 
   const [displayableResults, setDisplayableResults] = React.useState([]);
-
-  //let displayableResults = [];
 
   let [divCounter, setDivCounter] = React.useState(0);
 
@@ -24,6 +21,12 @@ const ConvertersHandler = () => {
     );
   };
 
+  const hasOnlyOneDisplayableResult = (input) => {
+    return (
+      displayableResults.filter((result) => result.input === input).length === 1
+    );
+  };
+
   const hasNoDisplayableResults = (input) => {
     return (
       displayableResults.filter((result) => result.input === input).length === 0
@@ -31,31 +34,45 @@ const ConvertersHandler = () => {
   };
 
   const displayPossibleResults = (input) => {
-    return (
-      <div>
-        <details>
-          {displayableResults
-            .filter((result) => result.input === input)
-            .map((result) => {
-              if (isBestResult(result, input)) {
-                return (
-                  <summary>
+    if (!hasOnlyOneDisplayableResult(input)) {
+      return (
+        <div>
+          <details>
+            {displayableResults
+              .filter((result) => result.input === input)
+              .map((result) => {
+                if (isBestResult(result, input)) {
+                  return (
+                    <summary>
+                      <div>
+                        {convertedItem(result.id, result.resultValue, true)}
+                      </div>
+                    </summary>
+                  );
+                } else {
+                  return (
                     <div>
-                      {convertedItem(result.id, result.resultValue, true)}
+                      {convertedItem(result.id, result.resultValue, false)}
                     </div>
-                  </summary>
-                );
-              } else {
-                return (
-                  <div>
-                    {convertedItem(result.id, result.resultValue, false)}
-                  </div>
-                );
-              }
-            })}
-        </details>
-      </div>
-    );
+                  );
+                }
+              })}
+          </details>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <div>
+            {convertedItem(
+              displayableResults[0].id,
+              displayableResults[0].resultValue,
+              false
+            )}
+          </div>
+        </div>
+      );
+    }
   };
 
   const displayConversion = () => {
@@ -368,17 +385,19 @@ const ConvertersHandler = () => {
         <div className="container py-3">
           <div className="row">
             <div className="col-12 text-center">
-              <h1 className="mb-4"> Elrond Converters</h1>
+              <h1 className="mb-4">
+                <a href="#">Elrond Converters</a>
+              </h1>
             </div>
           </div>
           <div className="row">
             <div className="col-12 col-lg-9 mx-auto">
               <form className="main-search w-100 d-flex">
                 <div className="input-group ">
-                  <input
-                    type="text"
+                  <textarea
+                    style={{ lineHeight: "15px" }}
                     value={input}
-                    className="form-control border-0 rounded-pill py-3 pl-3 pl-lg-4 text-truncate"
+                    className="form-control border-0 rounded-pill py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
                     onChange={(event) => {
                       setInput(event.target.value);
@@ -398,11 +417,6 @@ const ConvertersHandler = () => {
           </div>
           <div style={{ display: isVisible ? "inline" : "none" }}>
             <div>{displayConversion()}</div>
-
-            {/*Incearaca sa pui blocul intr o componenta si sa aiba props currentWord / displayableResult */}
-
-            {/* <div>{!input.includes("@") ? displayBlock() : ""}</div>
-            <div> {input.includes("@") ? displayBlocks(input) : ""}</div> */}
           </div>
         </div>
       </div>

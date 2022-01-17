@@ -12,7 +12,7 @@ const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
   return (
     <div style={{ display: isMain ? "" : "" }}>
       <div className="row py-3 border-bottom detail-item">
-        <div className="col-lg-5 text-secondary text-lg-right pl-lg-spacer">
+        <div className="col-lg-3 text-secondary text-lg-right pl-lg-spacer">
           {label}
         </div>
         <div className="col pr-lg-spacer">
