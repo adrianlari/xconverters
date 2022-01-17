@@ -386,7 +386,12 @@ const ConvertersHandler = () => {
           <div className="row">
             <div className="col-12 text-center">
               <h1 className="mb-4">
-                <a href="#">Elrond Converters</a>
+                <a
+                  style={{ color: "inherit" }}
+                  href="https://elrond-converters.netlify.app/"
+                >
+                  Elrond Converters
+                </a>
               </h1>
             </div>
           </div>
@@ -395,7 +400,8 @@ const ConvertersHandler = () => {
               <form className="main-search w-100 d-flex">
                 <div className="input-group ">
                   <textarea
-                    style={{ lineHeight: "15px" }}
+                    rows="1"
+                    // style={{ row }}
                     value={input}
                     className="form-control border-0 rounded-pill py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
@@ -411,6 +417,12 @@ const ConvertersHandler = () => {
                       }
                     }}
                   />
+                  <button
+                    className="btn btn-outline-light btn-pill mr-2 "
+                    onClick={() => setInput("")}
+                  >
+                    Clear input
+                  </button>
                 </div>
               </form>
             </div>
