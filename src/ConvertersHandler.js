@@ -195,6 +195,8 @@ const ConvertersHandler = () => {
     tryConvertHexToBase64(input);
 
     tryConvertBase64ToHex(input);
+
+    tryConvertBase64ToHexDecimal(input);
   };
 
   const convertedItem = (id, result, isMain) => {
@@ -374,6 +376,24 @@ const ConvertersHandler = () => {
 
       if (checks.base64Value(result)) {
         addToDisplayableResults(ConversionTypes.decimalToBase64, result, input);
+      }
+    }
+  };
+
+  const tryConvertBase64ToHexDecimal = (input) => {
+    if (checks.base64EncodedString(input)) {
+      const result1 = Buffer.from(input, "base64").toString("hex");
+
+      if (checks.hexadecimal(result1)) {
+        const result2 = parseInt(result1, 16);
+
+        if (checks.decimal(result2)) {
+          addToDisplayableResults(
+            ConversionTypes.base64ToHexDecimal,
+            result2,
+            input
+          );
+        }
       }
     }
   };

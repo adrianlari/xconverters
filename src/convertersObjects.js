@@ -57,4 +57,8 @@ export const converters = [
     label: "Base64 => Hex",
     value: ConversionTypes.base64ToHexadecimal,
   },
+  {
+    label: "Base64 => Hex Decimal",
+    value: ConversionTypes.base64ToHexDecimal,
+  },
 ];
