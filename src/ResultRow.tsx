@@ -1,16 +1,43 @@
+import React from "react";
+import * as checks from "./check";
+import { Balance } from "@elrondnetwork/erdjs/out";
+
 interface ResultRowParams {
   label: string;
   result: string;
-  isMain: boolean;
 }
 
-const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
+const ResultRow = ({ label, result }: ResultRowParams) => {
   const copyToCliboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
 
+  const displayDenominationIfNeeded = () => {
+    if (
+      String(label).endsWith("Decimal") &&
+      checks.decimal(result) &&
+      String(result).length > 12
+    ) {
+      const denomination = Balance.fromString(result).toCurrencyString();
+
+      return (
+        <div
+          style={{
+            display: denomination !== "" ? "block" : "none",
+            position: "absolute",
+            top: "15px",
+            left: "15px",
+            color: "GrayText",
+          }}
+        >
+          {denomination}
+        </div>
+      );
+    }
+  };
+
   return (
-    <div style={{ display: isMain ? "" : "" }}>
+    <div>
       <div className="row py-3 border-bottom detail-item">
         <div className="col-lg-3 text-secondary text-lg-right pl-lg-spacer">
           {label}
@@ -18,6 +45,7 @@ const ResultRow = ({ label, result, isMain }: ResultRowParams) => {
         <div className="col pr-lg-spacer">
           <div className="d-flex align-items-center text-break-all">
             {result}
+            <div>{displayDenominationIfNeeded()}</div>
             <a onClick={() => copyToCliboard(result)} className="side-action ">
               <svg
                 aria-hidden="true"

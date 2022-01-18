@@ -15,9 +15,7 @@ const ConvertersHandler = () => {
 
   const isBestResult = (result, input) => {
     return (
-      displayableResults.filter(
-        (res) => res.input === input && res.id < result.id
-      ).length === 0
+      displayableResults.filter((res) => res.input === input)[0] === result
     );
   };
 
@@ -45,14 +43,20 @@ const ConvertersHandler = () => {
                   return (
                     <summary>
                       <div>
-                        {convertedItem(result.id, result.resultValue, true)}
+                        {convertedItem(
+                          result.conversionTypeId,
+                          result.resultValue
+                        )}
                       </div>
                     </summary>
                   );
                 } else {
                   return (
                     <div>
-                      {convertedItem(result.id, result.resultValue, false)}
+                      {convertedItem(
+                        result.conversionTypeId,
+                        result.resultValue
+                      )}
                     </div>
                   );
                 }
@@ -65,7 +69,7 @@ const ConvertersHandler = () => {
         <div>
           <div>
             {convertedItem(
-              displayableResults[0].id,
+              displayableResults[0].conversionTypeId,
               displayableResults[0].resultValue,
               false
             )}
@@ -134,10 +138,11 @@ const ConvertersHandler = () => {
     );
   };
 
-  const addToDisplayableResults = (id, resultValue, input) => {
+  const addToDisplayableResults = (conversionTypeId, resultValue, input) => {
     if (
       displayableResults.some(
-        (displayableResult) => displayableResult.id === id
+        (displayableResult) =>
+          displayableResult.conversionTypeId === conversionTypeId
       )
     ) {
       return;
@@ -145,7 +150,11 @@ const ConvertersHandler = () => {
 
     setDisplayableResults((oldArray) => [
       ...oldArray,
-      { id: id, resultValue: resultValue, input: input },
+      {
+        conversionTypeId: conversionTypeId,
+        resultValue: resultValue,
+        input: input,
+      },
     ]);
   };
 
@@ -156,9 +165,9 @@ const ConvertersHandler = () => {
 
     tryConvertHexToBech32(hexInput);
 
-    tryConvertHexToDecimal(hexInput);
-
     tryConvertHexToString(hexInput);
+
+    tryConvertHexToDecimal(hexInput);
 
     tryConvertHexToBase64(hexInput);
   };
@@ -199,17 +208,15 @@ const ConvertersHandler = () => {
     tryConvertBase64ToHexDecimal(input);
   };
 
-  const convertedItem = (id, result, isMain) => {
-    const label = converters.map((pair) => {
-      if (pair.value === id) return pair.label;
-      return "";
-    });
+  const convertedItem = (conversionTypeId, result) => {
+    let label = converters.filter((pair) => pair.value === conversionTypeId)[0]
+      .label;
 
     if (!result) return "";
 
     return (
       <div key={divCounter++}>
-        <ResultRow label={label} result={result} isMain={isMain} />
+        <ResultRow label={label} result={result} />
       </div>
     );
   };
