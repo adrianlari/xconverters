@@ -4,10 +4,19 @@ import { Address, Balance } from "@elrondnetwork/erdjs/out";
 import { ConversionTypes } from "./conversionTypes";
 import { converters } from "./convertersObjects";
 import ResultRow from "./ResultRow";
+import Card from "./Card";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
   const [isVisible, setIsVisible] = React.useState(false);
+
+  let indexes = [];
+  //const [indexes, setIndexes] = React.useState([]);
+  const elRefs = React.useRef([]);
+  const textarea = React.useRef();
+
+  const [lastSelected, setLastSelected] = React.useState(-1);
+  let inputToGive;
 
   const [displayableResults, setDisplayableResults] = React.useState([]);
 
@@ -79,63 +88,195 @@ const ConvertersHandler = () => {
     }
   };
 
+  const getNextIndex = () => {
+    inputToGive = indexes.shift();
+    // console.log({ inputToGive });
+    return parseInt(inputToGive);
+  };
+
+  const populateIndexesArray = (inputArrayLength) => {
+    for (let i = 0; i < inputArrayLength; i++) {
+      indexes.push(i);
+    }
+  };
+
+  const populateRefs = () => {
+    if (elRefs.current.length !== indexes.length) {
+      elRefs.current = Array(indexes.length)
+        .fill()
+        .map((_, i) => elRefs.current[i] || React.createRef());
+    }
+  };
+
   const displayConversion = () => {
     const inputArray = input.split("@");
+
+    if (!inputArray) return;
+
+    populateIndexesArray(inputArray.length);
+
+    populateRefs();
 
     if (inputArray.length === 1) {
       convertWord(inputArray[0]);
       return displayBlock(inputArray[0]);
     } else {
+      const index = getNextIndex();
+      // console.log({ index });
       return (
         <div>
+          <div ref={elRefs.current[index]}>
+            <Card
+              click={(index) => click(index)}
+              index={index}
+              word={inputArray[0]}
+            />
+          </div>
+
           {inputArray.map((word) => {
             //convertWord(word);
             hexConversions(word);
             return displayBlock(word);
           })}
         </div>
+        // </div>
       );
     }
   };
+  // <div>
+  //   <div>
+  //     <div
+  //       style={{ marginTop: "2%" }}
+  //       ref={elRefs.current[getNextIndex()]}
+  //     >
+  //       <div className="container page-content">
+  //         <div className="row">
+  //           <div className="col-9" style={{ marginLeft: "12.5%" }}>
+  //             <div className="transaction-info card">
+  //               <div
+  //                 className="card-header status-text-success"
+  //                 style={{ backgroundColor: "transparent" }}
+  //               >
+  //                 <div className="card-header-item d-flex align-items-center">
+  //                   <span>The function is: {inputArray[0]}</span>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+
+  const click = (index) => {
+    if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
+      elRefs.current[lastSelected].current.style.backgroundColor =
+        "transparent";
+
+    const text = input.split("@")[index];
+    const startingPos = input.indexOf(text);
+
+    setLastSelected(index);
+    // console.log({ index });
+    // console.log({ lastSelected });
+    elRefs.current[index].current.style.backgroundColor = "red";
+    textarea.current.setSelectionRange(startingPos, startingPos + text.length);
+    textarea.current.focus();
+    // console.log({ textarea });
+    // textarea.current.value = textarea.current.textContent.replace(
+    //   pattern,
+    //   (match) => `<mark style={{backgroundColor: "red"}}>${match}</mark>`
+    // );
+    // console.log("from parent " + index);
+  };
+
+  // const blur = () => {
+  //   console.log("blur parent");
+  // };
 
   const displayBlock = (word) => {
     if (!word || hasNoDisplayableResults(word)) return;
 
+    const index = getNextIndex();
+
     return (
-      <div style={{ marginTop: "2%" }} key={divCounter++}>
-        <div className="container page-content">
-          <div className="row">
-            <div className="col-9" style={{ marginLeft: "12.5%" }}>
-              <div className="transaction-info card">
-                <div
-                  className="card-header status-text-success"
-                  style={{ backgroundColor: "transparent" }}
-                >
-                  <div className="card-header-item d-flex align-items-center">
-                    <span>Possible Conversions for {word}</span>
-                  </div>
-                </div>
-                <div className="card-body p-0">
-                  <div className="container-fluid">
-                    <div className="tab-content">
-                      <div
-                        id="transaction-tabs-tabpane-details"
-                        aria-labelledby="transaction-tabs-tab-details"
-                        role="tabpanel"
-                        aria-hidden="false"
-                        className="fade tab-pane active show"
-                      >
-                        <div>{displayPossibleResults(word)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div ref={elRefs.current[index]}>
+        <Card
+          click={(index) => click(index)}
+          index={index}
+          word={word}
+          results={displayPossibleResults(word)}
+        />
       </div>
+      // <div
+      //   style={{ marginTop: "2%" }}
+      //   ref={elRefs.current[getNextIndex()]}
+      //   onClick={(event) => selectTextCorrespondingly(event)}
+      //   key={divCounter++}
+      // >
+      //   <div className="container page-content">
+      //     <div className="row">
+      //       <div className="col-9" style={{ marginLeft: "12.5%" }}>
+      //         <div className="transaction-info card">
+      //           <div
+      //             className="card-header status-text-success"
+      //             style={{ backgroundColor: "transparent" }}
+      //           >
+      //             <div className="card-header-item d-flex align-items-center">
+      //               <span>Possible Conversions for {word}</span>
+      //             </div>
+      //           </div>
+      //           <div className="card-body p-0">
+      //             <div className="container-fluid">
+      //               <div className="tab-content">
+      //                 <div
+      //                   id="transaction-tabs-tabpane-details"
+      //                   aria-labelledby="transaction-tabs-tab-details"
+      //                   role="tabpanel"
+      //                   aria-hidden="false"
+      //                   className="fade tab-pane active show"
+      //                 >
+      //                   <div>{displayPossibleResults(word)}</div>
+      //                 </div>
+      //               </div>
+      //             </div>
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   </div>
+      // </div>
     );
+  };
+
+  // const selectTextCorrespondingly = (event) => {
+  //   console.log(event.target);
+  // };
+
+  const highlightCard = () => {
+    if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
+      elRefs.current[lastSelected].current.style.backgroundColor =
+        "transparent";
+
+    if (document.activeElement.tagName === "TEXTAREA") {
+      const text = window.getSelection().toString();
+
+      if (text.length > 0) {
+        //alert(text);
+        const startIndex = document.activeElement.selectionStart; //.indexOf(text);
+
+        const inputArray = input.split("@");
+
+        if (!inputArray) return;
+
+        const arrayIndex = input.substr(0, startIndex).split("@").length - 1;
+        // console.log({ startIndex });
+
+        // console.log(elRefs.current[arrayIndex]);
+        elRefs.current[arrayIndex].current.style.backgroundColor = "red";
+        setLastSelected(arrayIndex);
+      }
+    }
   };
 
   const addToDisplayableResults = (conversionTypeId, resultValue, input) => {
@@ -216,7 +357,7 @@ const ConvertersHandler = () => {
 
     return (
       <div key={divCounter++}>
-        <ResultRow label={label} result={result} />
+        <ResultRow label={label} result={result} key={divCounter++} />
       </div>
     );
   };
@@ -406,8 +547,18 @@ const ConvertersHandler = () => {
   };
 
   //#endregion
+
+  // document.body.onDoubleClick = highlightCard();
+
   return (
-    <div>
+    <div
+      // onClick={(event) => {
+      //   console.log(event.target.index);
+      //   console.log("clicked");
+      // }}
+      onMouseUp={() => highlightCard()}
+      onDoubleClick={() => highlightCard()}
+    >
       <div className="main-search-container py-spacer">
         <div className="container py-3">
           <div className="row">
@@ -427,10 +578,13 @@ const ConvertersHandler = () => {
               <form className="main-search w-100 d-flex">
                 <div className="input-group ">
                   <textarea
-                    rows="1"
-                    // style={{ row }}
+                    id="blabla"
+                    ref={textarea}
+                    // onSelect={highlightCard()}
+                    rows="3"
                     value={input}
-                    className="form-control border-0 rounded-pill py-3 pl-1 pl-lg-4"
+                    style={{ borderRadius: "20px" }}
+                    className="form-control border-0 py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
                     onChange={(event) => {
                       setInput(event.target.value);
@@ -445,7 +599,8 @@ const ConvertersHandler = () => {
                     }}
                   />
                   <button
-                    className="btn btn-outline-light btn-pill mr-2 "
+                    style={{ borderRadius: "20px" }}
+                    className="btn btn-outline-light btn-lg mr-2 "
                     onClick={() => setInput("")}
                   >
                     Clear input

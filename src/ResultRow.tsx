@@ -46,6 +46,7 @@ const ResultRow = ({ label, result }: ResultRowParams) => {
           <div className="d-flex align-items-center text-break-all">
             {result}
             <div>{displayDenominationIfNeeded()}</div>
+            {/* eslint-disable-next-line*/}
             <a onClick={() => copyToCliboard(result)} className="side-action ">
               <svg
                 aria-hidden="true"
