@@ -1,8 +1,6 @@
 import React from "react";
 import * as checks from "./check";
 import { Balance } from "@elrondnetwork/erdjs/out";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckDouble } from "@fortawesome/free-solid-svg-icons";
 
 interface ResultRowParams {
   label: string;
@@ -55,7 +53,6 @@ const ResultRow = ({ label, result }: ResultRowParams) => {
             {result}
             <div>{displayDenominationIfNeeded()}</div>
             {/* eslint-disable-next-line*/}
-            {/* <FontAwesomeIcon icon={faCheckDouble} /> */}
             <a
               onClick={(event) => copyToCliboard(result, event)}
               className="side-action fa fa-check-double"
