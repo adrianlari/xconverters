@@ -5,6 +5,7 @@ import { ConversionTypes } from "./conversionTypes";
 import { converters } from "./convertersObjects";
 import ResultRow from "./ResultRow";
 import Card from "./Card";
+import FunctionCard from "./FunctionCard";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
@@ -126,7 +127,7 @@ const ConvertersHandler = () => {
       return (
         <div>
           <div ref={elRefs.current[index]}>
-            <Card
+            <FunctionCard
               click={(index) => click(index)}
               index={index}
               word={inputArray[0]}
@@ -176,10 +177,10 @@ const ConvertersHandler = () => {
     const text = input.split("@")[index];
     const startingPos = input.indexOf(text);
 
-    setLastSelected(index);
     // console.log({ index });
     // console.log({ lastSelected });
     elRefs.current[index].current.style.backgroundColor = "red";
+    setLastSelected(index);
     textarea.current.setSelectionRange(startingPos, startingPos + text.length);
     textarea.current.focus();
     // console.log({ textarea });
@@ -198,7 +199,7 @@ const ConvertersHandler = () => {
     if (!word || hasNoDisplayableResults(word)) return;
 
     const index = getNextIndex();
-
+    // console.log(displayPossibleResults(word));
     return (
       <div ref={elRefs.current[index]}>
         <Card

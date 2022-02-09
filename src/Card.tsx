@@ -26,7 +26,7 @@ export const Card = (props: any) => {
         <div className="row">
           <div className="col-9" style={{ marginLeft: "12.5%" }}>
             <div className="transaction-info card">
-              <div
+              {/* <div
                 className="card-header status-text-success"
                 style={{
                   display: index === 0 ? "block" : "none",
@@ -35,26 +35,23 @@ export const Card = (props: any) => {
               >
                 <div className="card-header-item d-flex align-items-center">
                   <span>The function is: {props.word}</span>
+                  {props.results}
                 </div>
-              </div>
+              </div> */}
               <div
                 className="card-header status-text-success"
                 // style={{ backgroundColor: "transparent" }}
                 style={{
-                  display: index !== 0 ? "block" : "none",
                   backgroundColor: "transparent",
                 }}
               >
-                <div
-                  className="card-header-item d-flex align-items-center"
-                  style={{ display: index !== 0 ? "block" : "none" }}
-                >
+                <div className="card-header-item d-flex align-items-center">
                   <span>Possible Conversions for {props.word}</span>
                 </div>
               </div>
               <div
                 className="card-body p-0"
-                style={{ display: index !== 0 ? "block" : "none" }}
+                // style={{ display: index !== 0 ? "block" : "none" }}
               >
                 <div className="container-fluid">
                   <div className="tab-content">
