@@ -36,7 +36,7 @@ export const hexadecimal = (input) => {
 };
 
 export const base64Value = (input) => {
-  return true;
+  return base64EncodedString(input);
 };
 
 export const amount = (input) => {
@@ -60,5 +60,15 @@ export const hexaEncodedString = (input) => {
 };
 
 export const base64EncodedString = (input) => {
+  if (
+    !Boolean(
+      input.match(
+        "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+      )
+    )
+  ) {
+    return false;
+  }
+
   return true;
 };
