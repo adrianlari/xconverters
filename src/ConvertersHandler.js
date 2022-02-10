@@ -276,7 +276,9 @@ const ConvertersHandler = () => {
         // console.log({ startIndex });
 
         // console.log(elRefs.current[arrayIndex]);
-        elRefs.current[arrayIndex].current.style.backgroundColor = "red";
+
+        elRefs.current[arrayIndex].current.style.backgroundColor = "#242526";
+        elRefs.current[arrayIndex].current.style.borderRadius = "10px";
         setLastSelected(arrayIndex);
       }
     }
