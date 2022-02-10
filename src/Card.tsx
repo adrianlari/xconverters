@@ -13,8 +13,8 @@ export const Card = (props: any) => {
 
   return (
     <div
-      onClick={() => {
-        props.click(index);
+      onMouseOver={() => {
+        props.hover(index);
         //console.log({ index });
         //setBackColor(backColor === "red" ? "transparent" : "red");
       }}

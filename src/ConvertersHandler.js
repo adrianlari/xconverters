@@ -128,7 +128,7 @@ const ConvertersHandler = () => {
         <div>
           <div ref={elRefs.current[index]}>
             <FunctionCard
-              click={(index) => click(index)}
+              hover={(index) => hover(index)}
               index={index}
               word={inputArray[0]}
             />
@@ -169,7 +169,7 @@ const ConvertersHandler = () => {
   //     </div>
   //   </div>
 
-  const click = (index) => {
+  const hover = (index) => {
     if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
       elRefs.current[lastSelected].current.style.backgroundColor =
         "transparent";
@@ -179,7 +179,9 @@ const ConvertersHandler = () => {
 
     // console.log({ index });
     // console.log({ lastSelected });
-    elRefs.current[index].current.style.backgroundColor = "red";
+    elRefs.current[index].current.style.backgroundColor = "#242526";
+    elRefs.current[index].current.style.borderRadius = "10px";
+
     setLastSelected(index);
     textarea.current.setSelectionRange(startingPos, startingPos + text.length);
     textarea.current.focus();
@@ -203,7 +205,7 @@ const ConvertersHandler = () => {
     return (
       <div ref={elRefs.current[index]}>
         <Card
-          click={(index) => click(index)}
+          hover={(index) => hover(index)}
           index={index}
           word={word}
           results={displayPossibleResults(word)}

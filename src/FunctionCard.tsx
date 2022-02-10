@@ -3,8 +3,8 @@ export const FunctionCard = (props: any) => {
 
   return (
     <div
-      onClick={() => {
-        props.click(index);
+      onMouseOver={() => {
+        props.hover(index);
       }}
       style={{ marginTop: "2%" }}
       key={index}
