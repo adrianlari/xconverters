@@ -10,17 +10,13 @@ import FunctionCard from "./FunctionCard";
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
   const [isVisible, setIsVisible] = React.useState(false);
+  const [lastSelected, setLastSelected] = React.useState(-1);
+  const [displayableResults, setDisplayableResults] = React.useState([]);
+  const textarea = React.useRef();
+  const elRefs = React.useRef([]);
 
   let indexes = [];
   //const [indexes, setIndexes] = React.useState([]);
-  const elRefs = React.useRef([]);
-  const textarea = React.useRef();
-
-  const [lastSelected, setLastSelected] = React.useState(-1);
-  let inputToGive;
-
-  const [displayableResults, setDisplayableResults] = React.useState([]);
-
   let [divCounter, setDivCounter] = React.useState(0);
 
   const isBestResult = (result, input) => {
@@ -90,9 +86,7 @@ const ConvertersHandler = () => {
   };
 
   const getNextIndex = () => {
-    inputToGive = indexes.shift();
-    // console.log({ inputToGive });
-    return parseInt(inputToGive);
+    return parseInt(indexes.shift());
   };
 
   const populateIndexesArray = (inputArrayLength) => {
@@ -120,6 +114,7 @@ const ConvertersHandler = () => {
 
     if (inputArray.length === 1) {
       convertWord(inputArray[0]);
+
       return displayBlock(inputArray[0]);
     } else {
       const index = getNextIndex();
@@ -144,30 +139,6 @@ const ConvertersHandler = () => {
       );
     }
   };
-  // <div>
-  //   <div>
-  //     <div
-  //       style={{ marginTop: "2%" }}
-  //       ref={elRefs.current[getNextIndex()]}
-  //     >
-  //       <div className="container page-content">
-  //         <div className="row">
-  //           <div className="col-9" style={{ marginLeft: "12.5%" }}>
-  //             <div className="transaction-info card">
-  //               <div
-  //                 className="card-header status-text-success"
-  //                 style={{ backgroundColor: "transparent" }}
-  //               >
-  //                 <div className="card-header-item d-flex align-items-center">
-  //                   <span>The function is: {inputArray[0]}</span>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
 
   const hover = (index) => {
     if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
@@ -193,15 +164,10 @@ const ConvertersHandler = () => {
     // console.log("from parent " + index);
   };
 
-  // const blur = () => {
-  //   console.log("blur parent");
-  // };
-
   const displayBlock = (word) => {
     if (!word || hasNoDisplayableResults(word)) return;
 
     const index = getNextIndex();
-    // console.log(displayPossibleResults(word));
     return (
       <div ref={elRefs.current[index]}>
         <Card
@@ -211,50 +177,8 @@ const ConvertersHandler = () => {
           results={displayPossibleResults(word)}
         />
       </div>
-      // <div
-      //   style={{ marginTop: "2%" }}
-      //   ref={elRefs.current[getNextIndex()]}
-      //   onClick={(event) => selectTextCorrespondingly(event)}
-      //   key={divCounter++}
-      // >
-      //   <div className="container page-content">
-      //     <div className="row">
-      //       <div className="col-9" style={{ marginLeft: "12.5%" }}>
-      //         <div className="transaction-info card">
-      //           <div
-      //             className="card-header status-text-success"
-      //             style={{ backgroundColor: "transparent" }}
-      //           >
-      //             <div className="card-header-item d-flex align-items-center">
-      //               <span>Possible Conversions for {word}</span>
-      //             </div>
-      //           </div>
-      //           <div className="card-body p-0">
-      //             <div className="container-fluid">
-      //               <div className="tab-content">
-      //                 <div
-      //                   id="transaction-tabs-tabpane-details"
-      //                   aria-labelledby="transaction-tabs-tab-details"
-      //                   role="tabpanel"
-      //                   aria-hidden="false"
-      //                   className="fade tab-pane active show"
-      //                 >
-      //                   <div>{displayPossibleResults(word)}</div>
-      //                 </div>
-      //               </div>
-      //             </div>
-      //           </div>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   </div>
-      // </div>
     );
   };
-
-  // const selectTextCorrespondingly = (event) => {
-  //   console.log(event.target);
-  // };
 
   const highlightCard = () => {
     if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
@@ -273,7 +197,7 @@ const ConvertersHandler = () => {
         if (!inputArray) return;
 
         const arrayIndex = input.substr(0, startIndex).split("@").length - 1;
-        // console.log({ startIndex });
+        // console.lo<cag({ startIndex });
 
         // console.log(elRefs.current[arrayIndex]);
 
@@ -398,7 +322,7 @@ const ConvertersHandler = () => {
       let result;
       try {
         result = new Address(input).bech32();
-      } catch {}
+      } catch { }
 
       if (result) {
         addToDisplayableResults(ConversionTypes.hexToBech32, result, input);
@@ -411,7 +335,7 @@ const ConvertersHandler = () => {
       let result;
       try {
         result = new Address(input).hex();
-      } catch {}
+      } catch { }
 
       if (result) {
         addToDisplayableResults(ConversionTypes.bech32ToHex, result, input);
@@ -582,16 +506,24 @@ const ConvertersHandler = () => {
             <div className="col-12 col-lg-9 mx-auto">
               <form className="main-search w-100 d-flex">
                 <div className="input-group ">
-                  <textarea
-                    id="blabla"
+                  <input
+                    type="search"
+                    autoComplete="off"
+                    id="input-text"
+                    rows="3"
                     ref={textarea}
                     // onSelect={highlightCard()}
-                    rows="3"
                     value={input}
-                    style={{ borderRadius: "20px" }}
+                    style={{
+                      borderRadius: "20px",
+                      resizeBy: "none",
+                      overflowX: "hidden",
+                      maxHeight: "100px",
+                    }}
                     className="form-control border-0 py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
                     onChange={(event) => {
+
                       setInput(event.target.value);
                       setDisplayableResults([]);
                       setDivCounter(0);
@@ -603,13 +535,6 @@ const ConvertersHandler = () => {
                       }
                     }}
                   />
-                  <button
-                    style={{ borderRadius: "20px" }}
-                    className="btn btn-outline-light btn-lg mr-2 "
-                    onClick={() => setInput("")}
-                  >
-                    Clear input
-                  </button>
                 </div>
               </form>
             </div>

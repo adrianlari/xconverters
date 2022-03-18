@@ -1,20 +1,19 @@
 import React from "react";
 
-// interface CardParams {
-//   index: number;
-//   results: React.Component;
-//   word: string;
-//   onClick: func
-// }
+interface CardParams {
+  index: number;
+  results: React.Component;
+  word: string;
+  hover: (index: number) => void
+}
 
-export const Card = (props: any) => {
+export const Card = ({ index, results, word, hover }: CardParams) => {
   // const [backColor, setBackColor] = React.useState("");
-  const index = props.index;
 
   return (
     <div
       onMouseOver={() => {
-        props.hover(index);
+        hover(index);
         //console.log({ index });
         //setBackColor(backColor === "red" ? "transparent" : "red");
       }}
@@ -26,32 +25,18 @@ export const Card = (props: any) => {
         <div className="row">
           <div className="col-9" style={{ marginLeft: "12.5%" }}>
             <div className="transaction-info card">
-              {/* <div
-                className="card-header status-text-success"
-                style={{
-                  display: index === 0 ? "block" : "none",
-                  backgroundColor: "transparent",
-                }}
-              >
-                <div className="card-header-item d-flex align-items-center">
-                  <span>The function is: {props.word}</span>
-                  {props.results}
-                </div>
-              </div> */}
               <div
                 className="card-header status-text-success"
-                // style={{ backgroundColor: "transparent" }}
                 style={{
                   backgroundColor: "transparent",
                 }}
               >
                 <div className="card-header-item d-flex align-items-center">
-                  <span>Possible Conversions for {props.word}</span>
+                  <span>Possible Conversions for {word}</span>
                 </div>
               </div>
               <div
                 className="card-body p-0"
-                // style={{ display: index !== 0 ? "block" : "none" }}
               >
                 <div className="container-fluid">
                   <div className="tab-content">
@@ -62,7 +47,7 @@ export const Card = (props: any) => {
                       aria-hidden="false"
                       className="fade tab-pane active show"
                     >
-                      {props.results}
+                      {results}
                     </div>
                   </div>
                 </div>
