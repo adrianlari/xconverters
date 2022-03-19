@@ -183,12 +183,24 @@ const ConvertersHandler = () => {
     );
   };
 
-  const highlightCard = () => {
-    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected])
-      cardsRefs.current[lastSelected].current.style.backgroundColor =
-        "transparent";
+  const unselectPrevious = () => {
+    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected]) {
 
-    if (document.activeElement.tagName === "TEXTAREA") {
+      const lastSelectedCardRef = cardsRefs.current[lastSelected];
+      const lastSelectedCard = lastSelectedCardRef.current;
+
+      lastSelectedCard.style.backgroundColor = "transparent";
+    }
+  }
+
+  const highlightCard = () => {
+    console.log({ isSingleMode })
+    unselectPrevious();
+
+    if (isSingleMode) return;
+
+    if (document.activeElement.tagName === "INPUT") {
+      console.log("here");
       const text = window.getSelection().toString();
 
       if (text.length > 0) {
@@ -509,15 +521,8 @@ const ConvertersHandler = () => {
 
                       setInput(event.target.value);
                       setIsSingleMode(event.target.value.split('@').length === 1)
-
                       setDisplayableResults([]);
-                      // setDivCounter(0);
-
-                      if (event.target.value) {
-                        setIsVisible(true);
-                      } else {
-                        setIsVisible(false);
-                      }
+                      setIsVisible(event.target.value !== null)
                     }}
                   />
                 </div>
