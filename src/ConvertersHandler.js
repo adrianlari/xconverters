@@ -149,9 +149,9 @@ const ConvertersHandler = () => {
   };
 
   const hover = (index) => {
-    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected])
-      cardsRefs.current[lastSelected].current.style.backgroundColor =
-        "transparent";
+    unselectPrevious();
+
+    if (isSingleMode) return;
 
     const text = input.split("@")[index];
     const startingPos = input.indexOf(text);
@@ -194,13 +194,11 @@ const ConvertersHandler = () => {
   }
 
   const highlightCard = () => {
-    console.log({ isSingleMode })
     unselectPrevious();
 
     if (isSingleMode) return;
 
     if (document.activeElement.tagName === "INPUT") {
-      console.log("here");
       const text = window.getSelection().toString();
 
       if (text.length > 0) {
