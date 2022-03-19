@@ -2,10 +2,9 @@ import React from "react";
 import * as checks from "./check";
 import { Address, Balance } from "@elrondnetwork/erdjs/out";
 import { ConversionTypes } from "./conversionTypes";
-import { converters } from "./convertersObjects";
-import ResultRow from "./ResultRow";
-import Card from "./Card";
-import FunctionCard from "./FunctionCard";
+import Card from "./Components/Card";
+import FunctionCard from "./Components/FunctionCard";
+import ConvertedRow from "./Components/ConvertedRow";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
@@ -13,11 +12,12 @@ const ConvertersHandler = () => {
   const [lastSelected, setLastSelected] = React.useState(-1);
   const [displayableResults, setDisplayableResults] = React.useState([]);
   const textarea = React.useRef();
-  const elRefs = React.useRef([]);
+  const cardsRefs = React.useRef([]);
+  const [isSingleMode, setIsSingleMode] = React.useState(false);
 
   let indexes = [];
   //const [indexes, setIndexes] = React.useState([]);
-  let [divCounter, setDivCounter] = React.useState(0);
+  // let [divCounter, setDivCounter] = React.useState(0);
 
   const isBestResult = (result, input) => {
     return (
@@ -38,9 +38,26 @@ const ConvertersHandler = () => {
   };
 
   const displayPossibleResults = (input) => {
-    if (!hasOnlyOneDisplayableResult(input)) {
+    if (isSingleMode) {
       return (
         <div>
+          {displayableResults
+            .filter((result) => result.input === input)
+            .map((result) => {
+              return (
+                <ConvertedRow
+                  conversionTypeId={result.conversionTypeId}
+                  result={result.resultValue}
+                />
+              );
+            })}
+        </div>
+      )
+    }
+
+    if (!hasOnlyOneDisplayableResult(input)) {
+      return (
+        <div key={input}>
           <details>
             {displayableResults
               .filter((result) => result.input === input)
@@ -48,22 +65,18 @@ const ConvertersHandler = () => {
                 if (isBestResult(result, input)) {
                   return (
                     <summary>
-                      <div>
-                        {convertedItem(
-                          result.conversionTypeId,
-                          result.resultValue
-                        )}
-                      </div>
+                      <ConvertedRow
+                        conversionTypeId={result.conversionTypeId}
+                        result={result.resultValue}
+                      />
                     </summary>
                   );
                 } else {
                   return (
-                    <div>
-                      {convertedItem(
-                        result.conversionTypeId,
-                        result.resultValue
-                      )}
-                    </div>
+                    <ConvertedRow
+                      conversionTypeId={result.conversionTypeId}
+                      result={result.resultValue}
+                    />
                   );
                 }
               })}
@@ -72,15 +85,10 @@ const ConvertersHandler = () => {
       );
     } else {
       return (
-        <div>
-          <div>
-            {convertedItem(
-              displayableResults[0].conversionTypeId,
-              displayableResults[0].resultValue,
-              false
-            )}
-          </div>
-        </div>
+        <ConvertedRow
+          conversionTypeId={displayableResults[0].conversionTypeId}
+          result={displayableResults[0].resultValue}
+        />
       );
     }
   };
@@ -96,10 +104,10 @@ const ConvertersHandler = () => {
   };
 
   const populateRefs = () => {
-    if (elRefs.current.length !== indexes.length) {
-      elRefs.current = Array(indexes.length)
+    if (cardsRefs.current.length !== indexes.length) {
+      cardsRefs.current = Array(indexes.length)
         .fill()
-        .map((_, i) => elRefs.current[i] || React.createRef());
+        .map((_, i) => cardsRefs.current[i] || React.createRef());
     }
   };
 
@@ -112,7 +120,7 @@ const ConvertersHandler = () => {
 
     populateRefs();
 
-    if (inputArray.length === 1) {
+    if (isSingleMode) {
       convertWord(inputArray[0]);
 
       return displayBlock(inputArray[0]);
@@ -121,7 +129,7 @@ const ConvertersHandler = () => {
       // console.log({ index });
       return (
         <div>
-          <div ref={elRefs.current[index]}>
+          <div ref={cardsRefs.current[index]}>
             <FunctionCard
               hover={(index) => hover(index)}
               index={index}
@@ -141,8 +149,8 @@ const ConvertersHandler = () => {
   };
 
   const hover = (index) => {
-    if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
-      elRefs.current[lastSelected].current.style.backgroundColor =
+    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected])
+      cardsRefs.current[lastSelected].current.style.backgroundColor =
         "transparent";
 
     const text = input.split("@")[index];
@@ -150,26 +158,21 @@ const ConvertersHandler = () => {
 
     // console.log({ index });
     // console.log({ lastSelected });
-    elRefs.current[index].current.style.backgroundColor = "#242526";
-    elRefs.current[index].current.style.borderRadius = "10px";
+    cardsRefs.current[index].current.style.backgroundColor = "#242526";
+    cardsRefs.current[index].current.style.borderRadius = "10px";
 
     setLastSelected(index);
     textarea.current.setSelectionRange(startingPos, startingPos + text.length);
     textarea.current.focus();
-    // console.log({ textarea });
-    // textarea.current.value = textarea.current.textContent.replace(
-    //   pattern,
-    //   (match) => `<mark style={{backgroundColor: "red"}}>${match}</mark>`
-    // );
-    // console.log("from parent " + index);
   };
 
   const displayBlock = (word) => {
     if (!word || hasNoDisplayableResults(word)) return;
 
     const index = getNextIndex();
+
     return (
-      <div ref={elRefs.current[index]}>
+      <div ref={cardsRefs.current[index]} key={index}>
         <Card
           hover={(index) => hover(index)}
           index={index}
@@ -181,8 +184,8 @@ const ConvertersHandler = () => {
   };
 
   const highlightCard = () => {
-    if (lastSelected !== -1 && elRefs && elRefs.current[lastSelected])
-      elRefs.current[lastSelected].current.style.backgroundColor =
+    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected])
+      cardsRefs.current[lastSelected].current.style.backgroundColor =
         "transparent";
 
     if (document.activeElement.tagName === "TEXTAREA") {
@@ -201,8 +204,8 @@ const ConvertersHandler = () => {
 
         // console.log(elRefs.current[arrayIndex]);
 
-        elRefs.current[arrayIndex].current.style.backgroundColor = "#242526";
-        elRefs.current[arrayIndex].current.style.borderRadius = "10px";
+        cardsRefs.current[arrayIndex].current.style.backgroundColor = "#242526";
+        cardsRefs.current[arrayIndex].current.style.borderRadius = "10px";
         setLastSelected(arrayIndex);
       }
     }
@@ -276,19 +279,6 @@ const ConvertersHandler = () => {
     tryConvertBase64ToHex(input);
 
     tryConvertBase64ToHexDecimal(input);
-  };
-
-  const convertedItem = (conversionTypeId, result) => {
-    let label = converters.filter((pair) => pair.value === conversionTypeId)[0]
-      .label;
-
-    if (!result) return "";
-
-    return (
-      <div key={divCounter++}>
-        <ResultRow label={label} result={result} key={divCounter++} />
-      </div>
-    );
   };
 
   //#region TryConverts
@@ -477,14 +467,8 @@ const ConvertersHandler = () => {
 
   //#endregion
 
-  // document.body.onDoubleClick = highlightCard();
-
   return (
     <div
-      // onClick={(event) => {
-      //   console.log(event.target.index);
-      //   console.log("clicked");
-      // }}
       onMouseUp={() => highlightCard()}
       onDoubleClick={() => highlightCard()}
     >
@@ -512,7 +496,6 @@ const ConvertersHandler = () => {
                     id="input-text"
                     rows="3"
                     ref={textarea}
-                    // onSelect={highlightCard()}
                     value={input}
                     style={{
                       borderRadius: "20px",
@@ -525,8 +508,10 @@ const ConvertersHandler = () => {
                     onChange={(event) => {
 
                       setInput(event.target.value);
+                      setIsSingleMode(event.target.value.split('@').length === 1)
+
                       setDisplayableResults([]);
-                      setDivCounter(0);
+                      // setDivCounter(0);
 
                       if (event.target.value) {
                         setIsVisible(true);
