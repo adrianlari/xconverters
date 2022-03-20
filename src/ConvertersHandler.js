@@ -523,13 +523,13 @@ const ConvertersHandler = () => {
               <form className="main-search w-100 d-flex">
                 <div className="input-group">
                   <textarea
-
                     autoComplete="off"
                     id="input-text"
                     ref={textarea}
                     value={input}
                     rows="1"
                     style={{
+                      resize: "none",
                       borderRadius: "20px",
                       resizeBy: "none",
                       overflowX: "hidden",
