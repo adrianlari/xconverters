@@ -112,6 +112,8 @@ const ConvertersHandler = () => {
   };
 
   const displayConversion = () => {
+    if (!input) return;
+
     const inputArray = input.split("@");
 
     if (!inputArray) return;
@@ -140,30 +142,13 @@ const ConvertersHandler = () => {
           {inputArray.map((word) => {
             //convertWord(word);
             hexConversions(word);
+
             return displayBlock(word);
           })}
         </div>
         // </div>
       );
     }
-  };
-
-  const hover = (index) => {
-    unselectPrevious();
-
-    if (isSingleMode) return;
-
-    const text = input.split("@")[index];
-    const startingPos = input.indexOf(text);
-
-    // console.log({ index });
-    // console.log({ lastSelected });
-    cardsRefs.current[index].current.style.backgroundColor = "#242526";
-    cardsRefs.current[index].current.style.borderRadius = "10px";
-
-    setLastSelected(index);
-    textarea.current.setSelectionRange(startingPos, startingPos + text.length);
-    textarea.current.focus();
   };
 
   const displayBlock = (word) => {
@@ -184,7 +169,7 @@ const ConvertersHandler = () => {
   };
 
   const unselectPrevious = () => {
-    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected]) {
+    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected] && cardsRefs.current[lastSelected].current) {
 
       const lastSelectedCardRef = cardsRefs.current[lastSelected];
       const lastSelectedCard = lastSelectedCardRef.current;
@@ -198,11 +183,10 @@ const ConvertersHandler = () => {
 
     if (isSingleMode) return;
 
-    if (document.activeElement.tagName === "INPUT") {
+    if (document.activeElement.tagName === "TEXTAREA") {
       const text = window.getSelection().toString();
 
       if (text.length > 0) {
-        //alert(text);
         const startIndex = document.activeElement.selectionStart; //.indexOf(text);
 
         const inputArray = input.split("@");
@@ -210,15 +194,36 @@ const ConvertersHandler = () => {
         if (!inputArray) return;
 
         const arrayIndex = input.substr(0, startIndex).split("@").length - 1;
-        // console.lo<cag({ startIndex });
 
-        // console.log(elRefs.current[arrayIndex]);
+        selectCard(arrayIndex);
 
-        cardsRefs.current[arrayIndex].current.style.backgroundColor = "#242526";
-        cardsRefs.current[arrayIndex].current.style.borderRadius = "10px";
         setLastSelected(arrayIndex);
       }
     }
+  };
+
+  const selectCard = (index) => {
+    if (!cardsRefs || !cardsRefs.current[index] || !cardsRefs.current[index].current) return;
+
+    cardsRefs.current[index].current.style.backgroundColor = "#242526";
+    cardsRefs.current[index].current.style.borderRadius = "10px";
+  }
+
+  const hover = (index) => {
+    unselectPrevious();
+
+    if (isSingleMode) return;
+    if (!input) return;
+
+    const textToSelect = input.split("@")[index];
+    const startingPos = input.indexOf(textToSelect);
+
+    selectCard(index);
+
+    setLastSelected(index);
+
+    textarea.current.setSelectionRange(startingPos, startingPos + textToSelect.length);
+    textarea.current.focus();
   };
 
   const addToDisplayableResults = (conversionTypeId, resultValue, input) => {
@@ -290,6 +295,11 @@ const ConvertersHandler = () => {
 
     tryConvertBase64ToHexDecimal(input);
   };
+
+  const clearInput = () => {
+    setInput("");
+    textarea.current.focus();
+  }
 
   //#region TryConverts
 
@@ -475,6 +485,10 @@ const ConvertersHandler = () => {
     }
   };
 
+  const resizeTextarea = () => {
+    textarea.current.style.height = "5px"
+    textarea.current.style.height = (textarea.current.scrollHeight) + "px";
+  }
   //#endregion
 
   return (
@@ -499,19 +513,19 @@ const ConvertersHandler = () => {
           <div className="row">
             <div className="col-12 col-lg-9 mx-auto">
               <form className="main-search w-100 d-flex">
-                <div className="input-group ">
-                  <input
-                    type="search"
+                <div className="input-group">
+                  <textarea
                     autoComplete="off"
                     id="input-text"
-                    rows="3"
                     ref={textarea}
                     value={input}
+                    rows="1"
                     style={{
                       borderRadius: "20px",
                       resizeBy: "none",
                       overflowX: "hidden",
-                      maxHeight: "100px",
+                      // maxHeight: "100px",
+                      width: "100%"
                     }}
                     className="form-control border-0 py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
@@ -521,8 +535,14 @@ const ConvertersHandler = () => {
                       setIsSingleMode(event.target.value.split('@').length === 1)
                       setDisplayableResults([]);
                       setIsVisible(event.target.value !== null)
+                      resizeTextarea();
                     }}
                   />
+                </div>
+                <div className="clear-input" onClick={() => clearInput()} style={{ display: input ? "inline" : "none", position: "absolute", zIndex: "100", height: textarea?.current?.style.height }}>
+                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#808080'>
+                    <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
+                  </svg>
                 </div>
               </form>
             </div>
