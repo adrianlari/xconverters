@@ -67,6 +67,7 @@ export const base64EncodedString = (input) => {
         "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
       )
     )
+    && Buffer.from(input, 'base64') === null
   ) {
     return false;
   }
