@@ -15,7 +15,7 @@ const ConvertersHandler = () => {
   const cardsRefs = React.useRef([]);
   const [isSingleMode, setIsSingleMode] = React.useState(false);
 
-  const [isMouseDown, setIsMouseDown] = React.useState(false);
+  // const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   let indexes = [];
   //const [indexes, setIndexes] = React.useState([]);
@@ -184,7 +184,7 @@ const ConvertersHandler = () => {
     unselectPrevious();
 
     if (isSingleMode) return;
-    if (isMouseDown) return;
+    // if (isMouseDown) return;
 
     console.log("highlight card");
 
@@ -218,7 +218,7 @@ const ConvertersHandler = () => {
     unselectPrevious();
 
     if (isSingleMode) return;
-    if (isMouseDown) return;
+    // if (isMouseDown) return;
     if (!input) return;
 
     const textToSelect = input.split("@")[index];
@@ -498,14 +498,7 @@ const ConvertersHandler = () => {
   }
 
   return (
-    <div
-    // onPointerDown={() => {
-    //   setIsMouseDown(true);
-    // }}
-    // onPointerUp={() => {
-    //   setIsMouseDown(false);
-    // }}
-    >
+    <div>
       <div className="main-search-container py-spacer">
         <div className="container py-3">
           <div className="row">
