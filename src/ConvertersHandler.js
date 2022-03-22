@@ -219,7 +219,6 @@ const ConvertersHandler = () => {
 
     if (isSingleMode) return;
     if (isMouseDown) return;
-
     if (!input) return;
 
     const textToSelect = input.split("@")[index];
@@ -500,21 +499,12 @@ const ConvertersHandler = () => {
 
   return (
     <div
-      // onMouseDown={(event) => {
-      //   console.log("general down")
-      //   if (!isSingleMode) {
-      //     setIsMouseDown(true);
-      //   }
-      // }}
-      // onMouseUp={(event) => {
-      //   console.log("general up")
-      //   if (!isSingleMode) {
-      //     setIsMouseDown(false);
-      //   }
-      // }}
-      onDragStart={() => {
-        console.log("drag start")
-      }}
+    // onPointerDown={() => {
+    //   setIsMouseDown(true);
+    // }}
+    // onPointerUp={() => {
+    //   setIsMouseDown(false);
+    // }}
     >
       <div className="main-search-container py-spacer">
         <div className="container py-3">

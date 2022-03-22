@@ -12,13 +12,10 @@ export const Card = ({ index, results, word, hover }: CardParams) => {
 
   return (
     <div
-      onMouseOver={() => {
+      onMouseEnter={() => {
         hover(index);
-        //console.log({ index });
-        //setBackColor(backColor === "red" ? "transparent" : "red");
       }}
       style={{ marginTop: "2%" }}
-      // style={{ marginTop: "2%", backgroundColor: backColor }}
       key={index}
     >
       <div className="container page-content">
