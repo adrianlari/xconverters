@@ -15,6 +15,8 @@ const ConvertersHandler = () => {
   const cardsRefs = React.useRef([]);
   const [isSingleMode, setIsSingleMode] = React.useState(false);
 
+  const [isMouseDown, setIsMouseDown] = React.useState(false);
+
   let indexes = [];
   //const [indexes, setIndexes] = React.useState([]);
   // let [divCounter, setDivCounter] = React.useState(0);
@@ -182,6 +184,7 @@ const ConvertersHandler = () => {
     unselectPrevious();
 
     if (isSingleMode) return;
+    if (isMouseDown) return;
 
     if (document.activeElement.tagName === "TEXTAREA") {
       const text = window.getSelection().toString();
@@ -213,6 +216,8 @@ const ConvertersHandler = () => {
     unselectPrevious();
 
     if (isSingleMode) return;
+    if (isMouseDown) return;
+
     if (!input) return;
 
     const textToSelect = input.split("@")[index];
@@ -493,15 +498,18 @@ const ConvertersHandler = () => {
 
   return (
     <div
-      // onMouseDown={() => {
-      //   console.log("started clicking")
-      // }}
-
-      // onMouseUp={() => {
-      //   console.log("stopped")
-      // }}
+      onMouseDown={() => {
+        if (!isSingleMode) {
+          setIsMouseDown(true);
+        }
+      }}
       onDoubleClick={() => highlightCard()}
-      onMouseUp={() => highlightCard()}
+      onMouseUp={() => {
+        if (!isSingleMode) {
+          setIsMouseDown(false);
+        }
+        highlightCard()
+      }}
 
     >
       <div className="main-search-container py-spacer">
