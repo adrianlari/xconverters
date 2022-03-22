@@ -186,6 +186,8 @@ const ConvertersHandler = () => {
     if (isSingleMode) return;
     if (isMouseDown) return;
 
+    console.log("highlight card");
+
     if (document.activeElement.tagName === "TEXTAREA") {
       const text = window.getSelection().toString();
 
@@ -498,19 +500,21 @@ const ConvertersHandler = () => {
 
   return (
     <div
-      onMouseDown={() => {
-        if (!isSingleMode) {
-          setIsMouseDown(true);
-        }
+      // onMouseDown={(event) => {
+      //   console.log("general down")
+      //   if (!isSingleMode) {
+      //     setIsMouseDown(true);
+      //   }
+      // }}
+      // onMouseUp={(event) => {
+      //   console.log("general up")
+      //   if (!isSingleMode) {
+      //     setIsMouseDown(false);
+      //   }
+      // }}
+      onDragStart={() => {
+        console.log("drag start")
       }}
-      onDoubleClick={() => highlightCard()}
-      onMouseUp={() => {
-        if (!isSingleMode) {
-          setIsMouseDown(false);
-        }
-        highlightCard()
-      }}
-
     >
       <div className="main-search-container py-spacer">
         <div className="container py-3">
@@ -531,6 +535,10 @@ const ConvertersHandler = () => {
               <form className="main-search w-100 d-flex">
                 <div className="input-group">
                   <textarea
+                    onDoubleClick={() => highlightCard()}
+                    onMouseUp={() => {
+                      highlightCard()
+                    }}
                     autoComplete="off"
                     id="input-text"
                     ref={textarea}
