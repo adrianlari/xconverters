@@ -77,10 +77,10 @@ details[open] > summary::before {
 
 /* #clear-input ::-webkit-search-cancel-button { */
   .clear-input {
-    right: 20px;  
+    right: 25px;  
     margin: auto;
-    top: calc(50% - 1.5em);
+    top: calc(50% - 1em);
     /* -webkit-appearance: none; */
     /* height: 3em ; */
-    width: 3em ;
+    width: 2em ;
 }
