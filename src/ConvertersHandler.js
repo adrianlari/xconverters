@@ -54,7 +54,7 @@ const ConvertersHandler = () => {
               );
             })}
         </div>
-      )
+      );
     }
 
     if (!hasOnlyOneDisplayableResult(input)) {
@@ -171,14 +171,18 @@ const ConvertersHandler = () => {
   };
 
   const unselectPrevious = () => {
-    if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected] && cardsRefs.current[lastSelected].current) {
-
+    if (
+      lastSelected !== -1 &&
+      cardsRefs &&
+      cardsRefs.current[lastSelected] &&
+      cardsRefs.current[lastSelected].current
+    ) {
       const lastSelectedCardRef = cardsRefs.current[lastSelected];
       const lastSelectedCard = lastSelectedCardRef.current;
 
       lastSelectedCard.style.backgroundColor = "transparent";
     }
-  }
+  };
 
   const highlightCard = () => {
     unselectPrevious();
@@ -208,11 +212,16 @@ const ConvertersHandler = () => {
   };
 
   const selectCard = (index) => {
-    if (!cardsRefs || !cardsRefs.current[index] || !cardsRefs.current[index].current) return;
+    if (
+      !cardsRefs ||
+      !cardsRefs.current[index] ||
+      !cardsRefs.current[index].current
+    )
+      return;
 
     cardsRefs.current[index].current.style.backgroundColor = "#242526";
     cardsRefs.current[index].current.style.borderRadius = "10px";
-  }
+  };
 
   const hover = (index) => {
     unselectPrevious();
@@ -227,7 +236,10 @@ const ConvertersHandler = () => {
     selectCard(index);
 
     setLastSelected(index);
-    textarea.current.setSelectionRange(startingPos, startingPos + textToSelect.length);
+    textarea.current.setSelectionRange(
+      startingPos,
+      startingPos + textToSelect.length
+    );
     textarea.current.focus();
   };
 
@@ -305,7 +317,7 @@ const ConvertersHandler = () => {
     setInput("");
     textarea.current.focus();
     textarea.current.style.height = "45px";
-  }
+  };
 
   //#region TryConverts
 
@@ -338,7 +350,7 @@ const ConvertersHandler = () => {
       let result;
       try {
         result = new Address(input).bech32();
-      } catch { }
+      } catch {}
 
       if (result) {
         addToDisplayableResults(ConversionTypes.hexToBech32, result, input);
@@ -351,7 +363,7 @@ const ConvertersHandler = () => {
       let result;
       try {
         result = new Address(input).hex();
-      } catch { }
+      } catch {}
 
       if (result) {
         addToDisplayableResults(ConversionTypes.bech32ToHex, result, input);
@@ -493,9 +505,9 @@ const ConvertersHandler = () => {
   //#endregion
 
   const resizeTextarea = () => {
-    textarea.current.style.height = "5px"
-    textarea.current.style.height = (textarea.current.scrollHeight) + "px";
-  }
+    textarea.current.style.height = "5px";
+    textarea.current.style.height = textarea.current.scrollHeight + "px";
+  };
 
   return (
     <div>
@@ -508,7 +520,7 @@ const ConvertersHandler = () => {
                   style={{ color: "inherit" }}
                   href="https://elrond-converters.netlify.app/"
                 >
-                  Elrond Converters
+                  XConverters
                 </a>
               </h1>
             </div>
@@ -520,7 +532,7 @@ const ConvertersHandler = () => {
                   <textarea
                     onDoubleClick={() => highlightCard()}
                     onMouseUp={() => {
-                      highlightCard()
+                      highlightCard();
                     }}
                     autoComplete="off"
                     id="input-text"
@@ -533,25 +545,37 @@ const ConvertersHandler = () => {
                       resizeBy: "none",
                       overflowX: "hidden",
                       // maxHeight: "100px",
-                      width: "100%"
+                      width: "100%",
                     }}
                     className="form-control border-0 py-3 pl-1 pl-lg-4"
                     placeholder="Insert a value to be converted."
                     onChange={(event) => {
-
                       setInput(event.target.value);
-                      setIsSingleMode(event.target.value.split('@').length === 1)
+                      setIsSingleMode(
+                        event.target.value.split("@").length === 1
+                      );
                       setDisplayableResults([]);
-                      setIsVisible(event.target.value !== null)
+                      setIsVisible(event.target.value !== null);
                       resizeTextarea();
                     }}
                   />
                 </div>
-                <div className="clear-input" onClick={() => clearInput()} style={{
-                  display: input ? "inline" : "none", position: "absolute", zIndex: "100", cursor: "pointer"
-                }}>
-                  < svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#808080' >
-                    <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
+                <div
+                  className="clear-input"
+                  onClick={() => clearInput()}
+                  style={{
+                    display: input ? "inline" : "none",
+                    position: "absolute",
+                    zIndex: "100",
+                    cursor: "pointer",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="#808080"
+                  >
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                   </svg>
                 </div>
               </form>
@@ -561,8 +585,8 @@ const ConvertersHandler = () => {
             <div>{displayConversion()}</div>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
