@@ -518,7 +518,7 @@ const ConvertersHandler = () => {
               <h1 className="mb-4">
                 <a
                   style={{ color: "inherit" }}
-                  href="https://elrond-converters.netlify.app/"
+                  href="https://xconverters.netlify.app/"
                 >
                   XConverters
                 </a>
