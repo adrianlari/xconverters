@@ -1,6 +1,7 @@
 import { ConversionTypes } from "./conversionTypes";
 import * as checks from "./check";
-import { Address, TokenPayment } from "@elrondnetwork/erdjs/out";
+import { Address } from "@elrondnetwork/erdjs/out/address";
+import { TokenPayment } from "@elrondnetwork/erdjs/out/tokenPayment";
 import { Base64 } from "js-base64";
 import BigNumber from "bignumber.js";
 
