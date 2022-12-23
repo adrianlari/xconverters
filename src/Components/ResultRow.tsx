@@ -1,6 +1,7 @@
 import React from "react";
 import * as checks from "../check";
-import { Balance } from "@elrondnetwork/erdjs/out";
+import { TokenPayment } from "@elrondnetwork/erdjs/out";
+import BigNumber from "bignumber.js";
 
 interface ResultRowParams {
   label: string;
@@ -20,11 +21,15 @@ const ResultRow = ({ label, result }: ResultRowParams) => {
 
   const displayDenominationIfNeeded = () => {
     if (
-      String(label).endsWith("Decimal") &&
+      label.endsWith("Decimal") &&
       checks.decimal(result) &&
-      String(result).length > 12
+      result.length > 12
     ) {
-      const denomination = Balance.fromString(result).toCurrencyString();
+      let denomination = ''
+      try {
+        denomination = TokenPayment.egldFromBigInteger(BigNumber(result)).toPrettyString()
+      }
+      catch { }
 
       return (
         <div

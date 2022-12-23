@@ -2,7 +2,7 @@ import React from "react";
 
 interface CardParams {
   index: number;
-  results: React.Component;
+  results: React.ReactNode;
   word: string;
   hover: (index: number) => void
 }
