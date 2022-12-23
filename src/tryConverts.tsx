@@ -1,12 +1,14 @@
 import { ConversionTypes } from "./conversionTypes";
 import * as checks from "./check";
-import { Address, Balance } from "@elrondnetwork/erdjs/out";
+import { Address, TokenPayment } from "@elrondnetwork/erdjs/out";
+import { Base64 } from "js-base64";
+import BigNumber from "bignumber.js";
 
-export const hexToDecimal = (input) => {
+export const hexToDecimal = (input: string) => {
   if (checks.hexadecimal(input)) {
-    const result = parseInt(input, 16);
+    const result = BigNumber(input, 16).toString();
 
-    if (checks.decimal(result)) {
+    if (checks.decimal(result.toString())) {
       const conversion = {
         type: ConversionTypes.hexaToDecimal,
         input,
@@ -18,9 +20,9 @@ export const hexToDecimal = (input) => {
   }
 };
 
-export const decimalToHex = (input) => {
+export const decimalToHex = (input: string) => {
   if (checks.decimal(input)) {
-    let result = parseInt(input, 10).toString(16);
+    let result = BigNumber(input).toString(16);
 
     if (result.length % 2 === 1) {
       result = "0" + result;
@@ -38,12 +40,12 @@ export const decimalToHex = (input) => {
   }
 };
 
-export const hexToBech32 = (input) => {
+export const hexToBech32 = (input: string) => {
   if (checks.hexAddress(input)) {
     let result;
     try {
       result = new Address(input).bech32();
-    } catch {}
+    } catch { }
 
     if (result) {
       const conversion = {
@@ -57,12 +59,12 @@ export const hexToBech32 = (input) => {
   }
 };
 
-export const bech32ToHex = (input) => {
+export const bech32ToHex = (input: string) => {
   if (checks.bech32Address(input)) {
     let result;
     try {
       result = new Address(input).hex();
-    } catch {}
+    } catch { }
 
     if (result) {
       const conversion = {
@@ -76,23 +78,29 @@ export const bech32ToHex = (input) => {
   }
 };
 
-export const base64ToHex = (input) => {
-  if (checks.base64EncodedString(input)) {
-    const result = Buffer.from(input, "base64").toString("hex");
+export const base64ToHex = (input: string) => {
+  if (!checks.base64EncodedString(input)) return;
 
-    const conversion = {
-      type: ConversionTypes.base64ToHexadecimal,
-      result,
-      input,
-    };
+  const decConversion = decimalToHex(Base64.fromBase64(input));
+  if (!decConversion) return;
 
-    return conversion;
-  }
+  const result = decConversion.result;
+
+  const conversion = {
+    type: ConversionTypes.base64ToHexadecimal,
+    result,
+    input,
+  };
+
+  return conversion;
 };
 
-export const hexToBase64 = (input) => {
+export const hexToBase64 = (input: string) => {
   if (checks.hexaEncodedString(input)) {
-    const result = Buffer.from(input, "hex").toString("base64");
+    const decConversion = hexToDecimal(input);
+    if (!decConversion) return;
+
+    const result = Base64.toBase64(decConversion.result.toString());
 
     const conversion = {
       type: ConversionTypes.hexadecimalToBase64,
@@ -104,9 +112,9 @@ export const hexToBase64 = (input) => {
   }
 };
 
-export const base64ToString = (input) => {
+export const base64ToString = (input: string) => {
   if (checks.base64EncodedString(input)) {
-    const result = Buffer.from(input, "base64").toString("ascii");
+    const result = Base64.fromBase64(input);
 
     if (checks.stringValue(result)) {
       const conversion = {
@@ -120,9 +128,9 @@ export const base64ToString = (input) => {
   }
 };
 
-export const stringToBase64 = (input) => {
+export const stringToBase64 = (input: string) => {
   if (checks.stringValue(input)) {
-    const result = Buffer.from(input, "ascii").toString("base64");
+    const result = Base64.toBase64(input);
 
     const conversion = {
       type: ConversionTypes.stringToBase64,
@@ -134,9 +142,14 @@ export const stringToBase64 = (input) => {
   }
 };
 
-export const hexToString = (input) => {
+export const hexToString = (input: string) => {
   if (checks.hexaEncodedString(input)) {
-    const result = Buffer.from(input, "hex").toString("utf8");
+    let result = '';
+    for (let i = 0; i < input.length; i += 2) {
+      let char = input[i] + '' + input[i + 1]
+      let hex = parseInt(char, 16)
+      result += String.fromCharCode(hex);
+    }
 
     if (checks.stringValue(result)) {
       const conversion = {
@@ -150,9 +163,14 @@ export const hexToString = (input) => {
   }
 };
 
-export const stringToHex = (input) => {
+export const stringToHex = (input: string) => {
   if (checks.stringValue(input)) {
-    const result = Buffer.from(input, "ascii").toString("hex");
+
+    let result = '';
+    for (let i = 0; i < input.length; i++) {
+      let hex = input.charCodeAt(i).toString(16);
+      result += hex
+    }
 
     if (checks.hexadecimal(result)) {
       const conversion = {
@@ -166,9 +184,10 @@ export const stringToHex = (input) => {
   }
 };
 
-export const denominatedToAmount = (input) => {
+export const denominatedToAmount = (input: BigNumber) => {
   if (checks.denominatedAmount(input)) {
-    const result = Balance.fromString(input).toCurrencyString();
+
+    const result = TokenPayment.egldFromBigInteger(input).toPrettyString()
 
     const conversion = {
       type: ConversionTypes.denominatedToAmount,
@@ -180,10 +199,10 @@ export const denominatedToAmount = (input) => {
   }
 };
 
-export const amountToDemoninate = (input) => {
+export const amountToDenominate = (input: BigNumber) => {
   if (checks.amount(input)) {
-    const result = Balance.egld(input).toString();
 
+    const result = TokenPayment.egldFromAmount(input).toPrettyString()
     const conversion = {
       type: ConversionTypes.amountToDenominated,
       result,
@@ -194,9 +213,9 @@ export const amountToDemoninate = (input) => {
   }
 };
 
-export const base64ToDecimal = (input) => {
+export const base64ToDecimal = (input: string) => {
   if (checks.base64Value(input)) {
-    const result = Buffer.from(input, "base64").toString("ascii");
+    const result = BigNumber(Base64.fromBase64(input)).valueOf();
 
     if (checks.decimal(result)) {
       const conversion = {
@@ -210,9 +229,9 @@ export const base64ToDecimal = (input) => {
   }
 };
 
-export const decimalToBase64 = (input) => {
+export const decimalToBase64 = (input: string) => {
   if (checks.decimal(input)) {
-    const result = Buffer.from(input, "ascii").toString("base64");
+    const result = Base64.toBase64(input);
 
     if (checks.base64Value(result)) {
       const conversion = {
@@ -226,12 +245,12 @@ export const decimalToBase64 = (input) => {
   }
 };
 
-export const base64ToHexDecimal = (input) => {
+export const base64ToHexDecimal = (input: string) => {
   if (checks.base64EncodedString(input)) {
-    const result1 = Buffer.from(input, "base64").toString("hex");
+    const result1 = Base64.fromBase64(input)
 
     if (checks.hexadecimal(result1)) {
-      const result2 = parseInt(result1, 16);
+      const result2 = BigNumber(result1, 16).toNumber().toString();
 
       if (checks.decimal(result2)) {
         const conversion = {
