@@ -76,11 +76,11 @@ details[open] > summary::before {
 }
 
 /* #clear-input ::-webkit-search-cancel-button { */
-  .clear-input {
-    right: 25px;  
-    margin: auto;
-    top: calc(50% - 1em);
-    /* -webkit-appearance: none; */
-    /* height: 3em ; */
-    width: 2em ;
+.clear-input {
+  right: 25px;
+  margin: auto;
+  top: calc(50% - 1em);
+  /* -webkit-appearance: none; */
+  /* height: 3em ; */
+  width: 2em;
 }
