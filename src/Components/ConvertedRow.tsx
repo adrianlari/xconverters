@@ -12,9 +12,7 @@ const ConvertedRow = ({ conversionTypeId, result }: ConvertedRowParams) => {
     if (!result) return "";
 
     return (
-        <div key={Math.random()} >
-            <ResultRow label={label} result={result} />
-        </div>
+        <ResultRow label={label} result={result} />
     );
 }
 

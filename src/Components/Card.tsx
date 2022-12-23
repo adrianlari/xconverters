@@ -8,8 +8,6 @@ interface CardParams {
 }
 
 export const Card = ({ index, results, word, hover }: CardParams) => {
-  // const [backColor, setBackColor] = React.useState("");
-
   return (
     <div
       onMouseEnter={() => {

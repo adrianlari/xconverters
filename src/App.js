@@ -2,15 +2,7 @@ import "./App.css";
 import ConvertersHandler from "./ConvertersHandler";
 
 const App = () => {
-  return (
-    <div>
-      <div>
-        <div>
-          <ConvertersHandler />
-        </div>
-      </div>
-    </div>
-  );
+  return <ConvertersHandler />;
 };
 
 export default App;

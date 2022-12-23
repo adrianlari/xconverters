@@ -1,10 +1,8 @@
 import React from "react";
-import * as checks from "./check";
-import { Address, Balance } from "@elrondnetwork/erdjs/out";
-import { ConversionTypes } from "./conversionTypes";
 import Card from "./Components/Card";
 import FunctionCard from "./Components/FunctionCard";
 import ConvertedRow from "./Components/ConvertedRow";
+import * as tryConvert from "./tryConverts";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
@@ -15,11 +13,9 @@ const ConvertersHandler = () => {
   const cardsRefs = React.useRef([]);
   const [isSingleMode, setIsSingleMode] = React.useState(false);
 
-  // const [isMouseDown, setIsMouseDown] = React.useState(false);
+  const TRANSACTION_SEPARATOR = "@";
 
   let indexes = [];
-  //const [indexes, setIndexes] = React.useState([]);
-  // let [divCounter, setDivCounter] = React.useState(0);
 
   const isBestResult = (result, input) => {
     return (
@@ -116,7 +112,7 @@ const ConvertersHandler = () => {
   const displayConversion = () => {
     if (!input) return;
 
-    const inputArray = input.split("@");
+    const inputArray = input.split(TRANSACTION_SEPARATOR);
 
     if (!inputArray) return;
 
@@ -130,7 +126,7 @@ const ConvertersHandler = () => {
       return displayBlock(inputArray[0]);
     } else {
       const index = getNextIndex();
-      // console.log({ index });
+
       return (
         <div>
           <div ref={cardsRefs.current[index]}>
@@ -148,7 +144,6 @@ const ConvertersHandler = () => {
             return displayBlock(word);
           })}
         </div>
-        // </div>
       );
     }
   };
@@ -170,7 +165,7 @@ const ConvertersHandler = () => {
     );
   };
 
-  const unselectPrevious = () => {
+  const unSelectPrevious = () => {
     if (
       lastSelected !== -1 &&
       cardsRefs &&
@@ -185,12 +180,9 @@ const ConvertersHandler = () => {
   };
 
   const highlightCard = () => {
-    unselectPrevious();
+    unSelectPrevious();
 
     if (isSingleMode) return;
-    // if (isMouseDown) return;
-
-    console.log("highlight card");
 
     if (document.activeElement.tagName === "TEXTAREA") {
       const text = window.getSelection().toString();
@@ -198,11 +190,12 @@ const ConvertersHandler = () => {
       if (text.length > 0) {
         const startIndex = document.activeElement.selectionStart; //.indexOf(text);
 
-        const inputArray = input.split("@");
+        const inputArray = input.split(TRANSACTION_SEPARATOR);
 
         if (!inputArray) return;
 
-        const arrayIndex = input.substr(0, startIndex).split("@").length - 1;
+        const arrayIndex =
+          input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
 
         selectCard(arrayIndex);
 
@@ -224,17 +217,17 @@ const ConvertersHandler = () => {
   };
 
   const hover = (index) => {
-    unselectPrevious();
+    unSelectPrevious();
 
-    if (isSingleMode) return;
-    // if (isMouseDown) return;
-    if (!input) return;
+    if (isSingleMode || !input) return;
 
-    const textToSelect = input.split("@")[index];
+    const textToSelect = input.split(TRANSACTION_SEPARATOR)[index];
+    if (!textToSelect) return;
+
     const startingPos = input.indexOf(textToSelect);
+    if (startingPos < 0) return;
 
     selectCard(index);
-
     setLastSelected(index);
     textarea.current.setSelectionRange(
       startingPos,
@@ -243,11 +236,19 @@ const ConvertersHandler = () => {
     textarea.current.focus();
   };
 
-  const addToDisplayableResults = (conversionTypeId, resultValue, input) => {
+  const addToDisplayableResults = (conversion) => {
+    if (
+      !conversion ||
+      !conversion.type ||
+      !conversion.input ||
+      !conversion.result
+    )
+      return;
+
     if (
       displayableResults.some(
         (displayableResult) =>
-          displayableResult.conversionTypeId === conversionTypeId
+          displayableResult.conversionTypeId === conversion.type
       )
     ) {
       return;
@@ -256,61 +257,78 @@ const ConvertersHandler = () => {
     setDisplayableResults((oldArray) => [
       ...oldArray,
       {
-        conversionTypeId: conversionTypeId,
-        resultValue: resultValue,
-        input: input,
+        conversionTypeId: conversion.type,
+        resultValue: conversion.result,
+        input: conversion.input,
       },
     ]);
   };
 
   const hexConversions = (hexInput) => {
-    if (!hexInput) {
-      return;
-    }
+    if (!hexInput) return;
 
-    tryConvertHexToBech32(hexInput);
+    let conversion;
+    conversion = tryConvert.hexToBech32(hexInput);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToString(hexInput);
+    conversion = tryConvert.hexToString(hexInput);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToDecimal(hexInput);
+    conversion = tryConvert.hexToDecimal(hexInput);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToBase64(hexInput);
+    conversion = tryConvert.hexToBase64(hexInput);
+    addToDisplayableResults(conversion);
   };
 
   const convertWord = (input) => {
-    if (!input) {
-      return;
-    }
+    if (!input) return;
+    let conversion;
 
-    tryConvertBech32ToHex(input);
+    conversion = tryConvert.bech32ToHex(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToBech32(input);
+    conversion = tryConvert.hexToBech32(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertDecimalToHex(input);
+    conversion = tryConvert.decimalToHex(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToDecimal(input);
+    conversion = tryConvert.hexToDecimal(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertDecimalToBase64(input);
+    conversion = tryConvert.decimalToBase64(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertBase64ToDecimal(input);
+    conversion = tryConvert.base64ToDecimal(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertAmountToDemoninate(input);
+    conversion = tryConvert.amountToDemoninate(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertDenominatedToAmount(input);
+    conversion = tryConvert.denominatedToAmount(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertStringToHex(input);
+    conversion = tryConvert.stringToHex(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToString(input);
+    conversion = tryConvert.hexToString(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertStringToBase64(input);
+    conversion = tryConvert.stringToBase64(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertBase64ToString(input);
+    conversion = tryConvert.base64ToString(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertHexToBase64(input);
+    conversion = tryConvert.hexToBase64(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertBase64ToHex(input);
+    conversion = tryConvert.base64ToHex(input);
+    addToDisplayableResults(conversion);
 
-    tryConvertBase64ToHexDecimal(input);
+    conversion = tryConvert.base64ToHexDecimal(input);
+    addToDisplayableResults(conversion);
   };
 
   const clearInput = () => {
@@ -318,191 +336,6 @@ const ConvertersHandler = () => {
     textarea.current.focus();
     textarea.current.style.height = "45px";
   };
-
-  //#region TryConverts
-
-  const tryConvertHexToDecimal = (input) => {
-    if (checks.hexadecimal(input)) {
-      const result = parseInt(input, 16);
-
-      if (checks.decimal(result)) {
-        addToDisplayableResults(ConversionTypes.hexaToDecimal, result, input);
-      }
-    }
-  };
-
-  const tryConvertDecimalToHex = (input) => {
-    if (checks.decimal(input)) {
-      let result = parseInt(input, 10).toString(16);
-
-      if (result.length % 2 === 1) {
-        result = "0" + result;
-      }
-
-      if (checks.hexadecimal(result)) {
-        addToDisplayableResults(ConversionTypes.decimalToHexa, result, input);
-      }
-    }
-  };
-
-  const tryConvertHexToBech32 = (input) => {
-    if (checks.hexAddress(input)) {
-      let result;
-      try {
-        result = new Address(input).bech32();
-      } catch {}
-
-      if (result) {
-        addToDisplayableResults(ConversionTypes.hexToBech32, result, input);
-      }
-    }
-  };
-
-  const tryConvertBech32ToHex = (input) => {
-    if (checks.bech32Address(input)) {
-      let result;
-      try {
-        result = new Address(input).hex();
-      } catch {}
-
-      if (result) {
-        addToDisplayableResults(ConversionTypes.bech32ToHex, result, input);
-      }
-    }
-  };
-
-  const tryConvertBase64ToHex = (input) => {
-    if (checks.base64EncodedString(input)) {
-      const result = Buffer.from(input, "base64").toString("hex");
-
-      addToDisplayableResults(
-        ConversionTypes.base64ToHexadecimal,
-        result,
-        input
-      );
-    }
-  };
-
-  const tryConvertHexToBase64 = (input) => {
-    if (checks.hexaEncodedString(input)) {
-      const result = Buffer.from(input, "hex").toString("base64");
-
-      addToDisplayableResults(
-        ConversionTypes.hexadecimalToBase64,
-        result,
-        input
-      );
-    }
-  };
-
-  const tryConvertBase64ToString = (input) => {
-    if (checks.base64EncodedString(input)) {
-      const result = Buffer.from(input, "base64").toString("ascii");
-
-      if (checks.stringValue(result)) {
-        addToDisplayableResults(ConversionTypes.base64ToString, result, input);
-      }
-    }
-  };
-
-  const tryConvertStringToBase64 = (input) => {
-    if (checks.stringValue(input)) {
-      const result = Buffer.from(input, "ascii").toString("base64");
-
-      addToDisplayableResults(ConversionTypes.stringToBase64, result, input);
-    }
-  };
-
-  const tryConvertHexToString = (input) => {
-    if (checks.hexaEncodedString(input)) {
-      const result = Buffer.from(input, "hex").toString("utf8");
-
-      if (checks.stringValue(result)) {
-        addToDisplayableResults(
-          ConversionTypes.hexadecimalToString,
-          result,
-          input
-        );
-      }
-    }
-  };
-
-  const tryConvertStringToHex = (input) => {
-    if (checks.stringValue(input)) {
-      const result = Buffer.from(input, "ascii").toString("hex");
-
-      if (checks.hexadecimal(result)) {
-        addToDisplayableResults(
-          ConversionTypes.stringToHexadecimal,
-          result,
-          input
-        );
-      }
-    }
-  };
-
-  const tryConvertDenominatedToAmount = (input) => {
-    if (checks.denominatedAmount(input)) {
-      const result = Balance.fromString(input).toCurrencyString();
-
-      addToDisplayableResults(
-        ConversionTypes.denominatedToAmount,
-        result,
-        input
-      );
-    }
-  };
-
-  const tryConvertAmountToDemoninate = (input) => {
-    if (checks.amount(input)) {
-      const result = Balance.egld(input).toString();
-
-      addToDisplayableResults(
-        ConversionTypes.amountToDenominated,
-        result,
-        input
-      );
-    }
-  };
-
-  const tryConvertBase64ToDecimal = (input) => {
-    if (checks.base64Value(input)) {
-      const result = Buffer.from(input, "base64").toString("ascii");
-
-      if (checks.decimal(result)) {
-        addToDisplayableResults(ConversionTypes.base64ToDecimal, result, input);
-      }
-    }
-  };
-
-  const tryConvertDecimalToBase64 = (input) => {
-    if (checks.decimal(input)) {
-      const result = Buffer.from(input, "ascii").toString("base64");
-
-      if (checks.base64Value(result)) {
-        addToDisplayableResults(ConversionTypes.decimalToBase64, result, input);
-      }
-    }
-  };
-
-  const tryConvertBase64ToHexDecimal = (input) => {
-    if (checks.base64EncodedString(input)) {
-      const result1 = Buffer.from(input, "base64").toString("hex");
-
-      if (checks.hexadecimal(result1)) {
-        const result2 = parseInt(result1, 16);
-
-        if (checks.decimal(result2)) {
-          addToDisplayableResults(
-            ConversionTypes.base64ToHexDecimal,
-            result2,
-            input
-          );
-        }
-      }
-    }
-  };
-  //#endregion
 
   const resizeTextarea = () => {
     textarea.current.style.height = "5px";
@@ -544,7 +377,6 @@ const ConvertersHandler = () => {
                       borderRadius: "20px",
                       resizeBy: "none",
                       overflowX: "hidden",
-                      // maxHeight: "100px",
                       width: "100%",
                     }}
                     className="form-control border-0 py-3 pl-1 pl-lg-4"
@@ -552,7 +384,8 @@ const ConvertersHandler = () => {
                     onChange={(event) => {
                       setInput(event.target.value);
                       setIsSingleMode(
-                        event.target.value.split("@").length === 1
+                        event.target.value.split(TRANSACTION_SEPARATOR)
+                          .length === 1
                       );
                       setDisplayableResults([]);
                       setIsVisible(event.target.value !== null);
