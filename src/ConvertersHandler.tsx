@@ -2,46 +2,48 @@ import React from "react";
 import Card from "./Components/Card";
 import FunctionCard from "./Components/FunctionCard";
 import ConvertedRow from "./Components/ConvertedRow";
-import * as tryConvert from "./tryConverts";
+import * as tryConvert from "./tryConverts"
+import { conversion } from "./conversion";
+import BigNumber from "bignumber.js";
 
 const ConvertersHandler = () => {
   const [input, setInput] = React.useState("");
   const [isVisible, setIsVisible] = React.useState(false);
   const [lastSelected, setLastSelected] = React.useState(-1);
-  const [displayableResults, setDisplayableResults] = React.useState([]);
-  const textarea = React.useRef();
-  const cardsRefs = React.useRef([]);
+  const [displayableResults, setDisplayableResults] = React.useState<any>([]);
+  const textarea = React.useRef() as React.MutableRefObject<HTMLTextAreaElement>;
+  const cardsRefs = React.useRef<any>([]);
   const [isSingleMode, setIsSingleMode] = React.useState(false);
 
   const TRANSACTION_SEPARATOR = "@";
 
-  let indexes = [];
+  let indexes: number[] = [];
 
-  const isBestResult = (result, input) => {
+  const isBestResult = (result: any, input: any) => {
     return (
-      displayableResults.filter((res) => res.input === input)[0] === result
+      displayableResults.filter((res: any) => res.input === input)[0] === result
     );
   };
 
-  const hasOnlyOneDisplayableResult = (input) => {
+  const hasOnlyOneDisplayableResult = (input: any) => {
     return (
-      displayableResults.filter((result) => result.input === input).length === 1
+      displayableResults.filter((result: any) => result.input === input).length === 1
     );
   };
 
-  const hasNoDisplayableResults = (input) => {
+  const hasNoDisplayableResults = (input: any) => {
     return (
-      displayableResults.filter((result) => result.input === input).length === 0
+      displayableResults.filter((result: any) => result.input === input).length === 0
     );
   };
 
-  const displayPossibleResults = (input) => {
+  const displayPossibleResults = (input: any) => {
     if (isSingleMode) {
       return (
         <div>
           {displayableResults
-            .filter((result) => result.input === input)
-            .map((result) => {
+            .filter((result: { input: any; }) => result.input === input)
+            .map((result: { conversionTypeId: number; resultValue: string; }) => {
               return (
                 <ConvertedRow
                   conversionTypeId={result.conversionTypeId}
@@ -58,8 +60,8 @@ const ConvertersHandler = () => {
         <div key={input}>
           <details>
             {displayableResults
-              .filter((result) => result.input === input)
-              .map((result) => {
+              .filter((result: { input: React.Key | null | undefined; }) => result.input === input)
+              .map((result: { conversionTypeId: number; resultValue: string; }) => {
                 if (isBestResult(result, input)) {
                   return (
                     <summary>
@@ -92,10 +94,10 @@ const ConvertersHandler = () => {
   };
 
   const getNextIndex = () => {
-    return parseInt(indexes.shift());
+    return indexes.shift() || 0;
   };
 
-  const populateIndexesArray = (inputArrayLength) => {
+  const populateIndexesArray = (inputArrayLength: number) => {
     for (let i = 0; i < inputArrayLength; i++) {
       indexes.push(i);
     }
@@ -104,7 +106,7 @@ const ConvertersHandler = () => {
   const populateRefs = () => {
     if (cardsRefs.current.length !== indexes.length) {
       cardsRefs.current = Array(indexes.length)
-        .fill()
+        .fill(null)
         .map((_, i) => cardsRefs.current[i] || React.createRef());
     }
   };
@@ -131,7 +133,7 @@ const ConvertersHandler = () => {
         <div>
           <div ref={cardsRefs.current[index]}>
             <FunctionCard
-              hover={(index) => hover(index)}
+              hover={(index: any) => hover(index)}
               index={index}
               word={inputArray[0]}
             />
@@ -148,7 +150,7 @@ const ConvertersHandler = () => {
     }
   };
 
-  const displayBlock = (word) => {
+  const displayBlock = (word: string) => {
     if (!word || hasNoDisplayableResults(word)) return;
 
     const index = getNextIndex();
@@ -183,28 +185,29 @@ const ConvertersHandler = () => {
     unSelectPrevious();
 
     if (isSingleMode) return;
+    if (!document || !document.activeElement || document.activeElement.tagName !== "TEXTAREA") return;
+    if (!window || !window.getSelection()) return;
 
-    if (document.activeElement.tagName === "TEXTAREA") {
-      const text = window.getSelection().toString();
+    const text = window.getSelection()?.toString();
+    if (!text) return;
 
-      if (text.length > 0) {
-        const startIndex = document.activeElement.selectionStart; //.indexOf(text);
+    if (text.length > 0) {
 
-        const inputArray = input.split(TRANSACTION_SEPARATOR);
+      const startIndex = (document.activeElement as HTMLInputElement).selectionStart || 0
+      const inputArray = input.split(TRANSACTION_SEPARATOR);
 
-        if (!inputArray) return;
+      if (!inputArray) return;
 
-        const arrayIndex =
-          input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
+      const arrayIndex =
+        input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
 
-        selectCard(arrayIndex);
+      selectCard(arrayIndex);
 
-        setLastSelected(arrayIndex);
-      }
+      setLastSelected(arrayIndex);
     }
   };
 
-  const selectCard = (index) => {
+  const selectCard = (index: number) => {
     if (
       !cardsRefs ||
       !cardsRefs.current[index] ||
@@ -216,7 +219,7 @@ const ConvertersHandler = () => {
     cardsRefs.current[index].current.style.borderRadius = "10px";
   };
 
-  const hover = (index) => {
+  const hover = (index: number) => {
     unSelectPrevious();
 
     if (isSingleMode || !input) return;
@@ -226,6 +229,7 @@ const ConvertersHandler = () => {
 
     const startingPos = input.indexOf(textToSelect);
     if (startingPos < 0) return;
+    if (!textarea || !textarea.current) return;
 
     selectCard(index);
     setLastSelected(index);
@@ -236,7 +240,7 @@ const ConvertersHandler = () => {
     textarea.current.focus();
   };
 
-  const addToDisplayableResults = (conversion) => {
+  const addToDisplayableResults = (conversion: conversion | undefined) => {
     if (
       !conversion ||
       !conversion.type ||
@@ -247,14 +251,14 @@ const ConvertersHandler = () => {
 
     if (
       displayableResults.some(
-        (displayableResult) =>
+        (displayableResult: { conversionTypeId: any; }) =>
           displayableResult.conversionTypeId === conversion.type
       )
     ) {
       return;
     }
 
-    setDisplayableResults((oldArray) => [
+    setDisplayableResults((oldArray: any) => [
       ...oldArray,
       {
         conversionTypeId: conversion.type,
@@ -264,10 +268,10 @@ const ConvertersHandler = () => {
     ]);
   };
 
-  const hexConversions = (hexInput) => {
+  const hexConversions = (hexInput: string) => {
     if (!hexInput) return;
 
-    let conversion;
+    let conversion: (conversion | undefined);
     conversion = tryConvert.hexToBech32(hexInput);
     addToDisplayableResults(conversion);
 
@@ -281,7 +285,7 @@ const ConvertersHandler = () => {
     addToDisplayableResults(conversion);
   };
 
-  const convertWord = (input) => {
+  const convertWord = (input: string) => {
     if (!input) return;
     let conversion;
 
@@ -303,10 +307,10 @@ const ConvertersHandler = () => {
     conversion = tryConvert.base64ToDecimal(input);
     addToDisplayableResults(conversion);
 
-    conversion = tryConvert.amountToDemoninate(input);
+    conversion = tryConvert.amountToDenominate(BigNumber(input));
     addToDisplayableResults(conversion);
 
-    conversion = tryConvert.denominatedToAmount(input);
+    conversion = tryConvert.denominatedToAmount(BigNumber(input));
     addToDisplayableResults(conversion);
 
     conversion = tryConvert.stringToHex(input);
@@ -333,11 +337,15 @@ const ConvertersHandler = () => {
 
   const clearInput = () => {
     setInput("");
+    if (!textarea || !textarea.current) return;
+
     textarea.current.focus();
     textarea.current.style.height = "45px";
   };
 
   const resizeTextarea = () => {
+    if (!textarea || !textarea.current) return;
+
     textarea.current.style.height = "5px";
     textarea.current.style.height = textarea.current.scrollHeight + "px";
   };
@@ -371,11 +379,10 @@ const ConvertersHandler = () => {
                     id="input-text"
                     ref={textarea}
                     value={input}
-                    rows="1"
+                    rows={1}
                     style={{
                       resize: "none",
                       borderRadius: "20px",
-                      resizeBy: "none",
                       overflowX: "hidden",
                       width: "100%",
                     }}
