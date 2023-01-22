@@ -1,19 +1,24 @@
-import { converters } from "../convertersObjects";
-import ResultRow from "./ResultRow";
+import { converters } from '../convertersObjects';
+import ResultRow from './ResultRow';
 
 interface ConvertedRowParams {
-    conversionTypeId: number;
-    result: string;
+	conversionTypeId: number;
+	result: string;
 }
 
 const ConvertedRow = ({ conversionTypeId, result }: ConvertedRowParams) => {
-    let label = converters.filter((pair: any) => pair.value === conversionTypeId)[0].label;
+	let label = converters.filter(
+		(pair: any) => pair.value === conversionTypeId
+	)[0].label;
 
-    if (!result) return <></>;
+	if (!result) return <></>;
 
-    return (
-        <ResultRow label={label} result={result} />
-    );
-}
+	return (
+		<ResultRow
+			label={label}
+			result={result}
+		/>
+	);
+};
 
 export default ConvertedRow;
