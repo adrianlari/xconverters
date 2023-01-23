@@ -24,7 +24,7 @@ export const hexAddress = (input: string) => {
 export const decimal = (input: string) => {
 	const rs = BigNumber(input);
 	if (!rs || !rs.s) return false;
-	console.log({ rs });
+
 	return true;
 };
 

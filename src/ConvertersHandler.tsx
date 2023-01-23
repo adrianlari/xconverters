@@ -1,4 +1,4 @@
-import React from 'react';
+import { createRef, Key, MutableRefObject, useRef, useState } from 'react';
 import Card from './Components/Card';
 import FunctionCard from './Components/FunctionCard';
 import ConvertedRow from './Components/ConvertedRow';
@@ -7,18 +7,26 @@ import { conversion } from './conversion';
 import BigNumber from 'bignumber.js';
 
 const ConvertersHandler = () => {
-	const [input, setInput] = React.useState('');
-	const [isVisible, setIsVisible] = React.useState(false);
-	const [lastSelected, setLastSelected] = React.useState(-1);
-	const [displayableResults, setDisplayableResults] = React.useState<any>([]);
-	const textarea =
-		React.useRef() as React.MutableRefObject<HTMLTextAreaElement>;
-	const cardsRefs = React.useRef<any>([]);
-	const [isSingleMode, setIsSingleMode] = React.useState(false);
+	const [input, setInput] = useState('');
+	const [isVisible, setIsVisible] = useState(false);
+	const [lastSelected, setLastSelected] = useState(-1);
+	const [displayableResults, setDisplayableResults] = useState<any>([]);
+	const textarea = useRef() as MutableRefObject<HTMLTextAreaElement>;
+	const cardsRefs = useRef<any>([]);
+	const [isSingleMode, setIsSingleMode] = useState(false);
 
 	const TRANSACTION_SEPARATOR = '@';
 
 	let indexes: number[] = [];
+
+	function* idMaker() {
+		let index = 0;
+		while (true) {
+			yield index++;
+		}
+	}
+
+	const gen = idMaker();
 
 	const isBestResult = (result: any, input: any) => {
 		return (
@@ -40,18 +48,19 @@ const ConvertersHandler = () => {
 		);
 	};
 
-	const displayPossibleResults = (input: any) => {
+	const displayPossibleResults = (input: string) => {
 		if (isSingleMode) {
 			return (
 				<div>
 					{displayableResults
-						.filter((result: { input: any }) => result.input === input)
+						.filter((result: { input: string }) => result.input === input)
 						.map(
 							(result: { conversionTypeId: number; resultValue: string }) => {
 								return (
 									<ConvertedRow
 										conversionTypeId={result.conversionTypeId}
 										result={result.resultValue}
+										key={gen.next().value as number}
 									/>
 								);
 							}
@@ -62,11 +71,11 @@ const ConvertersHandler = () => {
 
 		if (!hasOnlyOneDisplayableResult(input)) {
 			return (
-				<div key={input}>
+				<div key={gen.next().value as number}>
 					<details>
 						{displayableResults
 							.filter(
-								(result: { input: React.Key | null | undefined }) =>
+								(result: { input: Key | null | undefined }) =>
 									result.input === input
 							)
 							.map(
@@ -117,7 +126,7 @@ const ConvertersHandler = () => {
 		if (cardsRefs.current.length !== indexes.length) {
 			cardsRefs.current = Array(indexes.length)
 				.fill(null)
-				.map((_, i) => cardsRefs.current[i] || React.createRef());
+				.map((_, i) => cardsRefs.current[i] || createRef());
 		}
 	};
 
@@ -140,7 +149,7 @@ const ConvertersHandler = () => {
 			const index = getNextIndex();
 
 			return (
-				<div>
+				<>
 					<div ref={cardsRefs.current[index]}>
 						<FunctionCard
 							hover={(index: any) => hover(index)}
@@ -155,7 +164,7 @@ const ConvertersHandler = () => {
 
 						return displayBlock(word);
 					})}
-				</div>
+				</>
 			);
 		}
 	};
@@ -362,7 +371,7 @@ const ConvertersHandler = () => {
 	};
 
 	return (
-		<div>
+		<>
 			<div className="main-search-container py-spacer">
 				<div className="container py-3">
 					<div className="row">
@@ -429,12 +438,14 @@ const ConvertersHandler = () => {
 							</form>
 						</div>
 					</div>
-					<div style={{ display: isVisible ? 'inline' : 'none' }}>
-						<div>{displayConversion()}</div>
+					<div
+						className="row"
+						style={{ display: isVisible ? 'block' : 'none' }}>
+						<div>{input && displayConversion()}</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

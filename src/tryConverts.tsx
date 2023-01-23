@@ -24,7 +24,7 @@ export const hexToDecimal = (input: string) => {
 export const decimalToHex = (input: string) => {
 	if (checks.decimal(input)) {
 		let result = BigNumber(input).toString(16);
-		console.log({ a: input });
+
 		if (result.length % 2 === 1) {
 			result = '0' + result;
 		}
@@ -187,7 +187,7 @@ export const stringToHex = (input: string) => {
 };
 
 export const denominatedToAmount = (input: BigNumber) => {
-	if (checks.denominatedAmount(input)) {
+	if (checks.denominatedAmount(input) && input >= BigNumber(0)) {
 		const result = TokenPayment.egldFromBigInteger(input).toPrettyString();
 
 		const conversion = {
@@ -201,7 +201,7 @@ export const denominatedToAmount = (input: BigNumber) => {
 };
 
 export const amountToDenominate = (input: BigNumber) => {
-	if (checks.amount(input)) {
+	if (checks.amount(input) && input >= BigNumber(0)) {
 		const result = TokenPayment.egldFromAmount(input).toPrettyString();
 		const conversion = {
 			type: ConversionTypes.amountToDenominated,
