@@ -5,6 +5,22 @@ import { TokenPayment } from '@elrondnetwork/erdjs/out/tokenPayment';
 import { Base64 } from 'js-base64';
 import BigNumber from 'bignumber.js';
 
+// test('hexToDecimal converts 10 to 16', () => {
+// 	expect(hexToDecimal(10)).toBe(16);
+//   });
+
+// test('hexToDecimal converts 11 to 17', () => {
+// 	expect(hexToDecimal(11)).toBe(17);
+//   });
+
+// test('hexToDecimal converts F to 15', () => {
+// 	expect(hexToDecimal("F")).toBe(15);
+//   });
+
+// test('hexToDecimal converts f to 15', () => {
+// 	expect(hexToDecimal("f")).toBe(15);
+//   });
+
 export const hexToDecimal = (input: string) => {
 	if (checks.hexadecimal(input)) {
 		const result = BigNumber(input, 16).toString();

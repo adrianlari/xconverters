@@ -401,9 +401,8 @@ const ConvertersHandler = () => {
 										rows={1}
 										style={{
 											resize: 'none',
-											borderRadius: '20px',
+											borderRadius: '1.25rem',
 											overflowX: 'hidden',
-											width: '100%',
 										}}
 										className="form-control border-0 py-3 pl-1 pl-lg-4"
 										placeholder="Insert a value to be converted."
