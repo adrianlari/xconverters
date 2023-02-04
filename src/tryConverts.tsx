@@ -204,7 +204,12 @@ export const stringToHex = (input: string) => {
 
 export const denominatedToAmount = (input: BigNumber) => {
 	if (checks.denominatedAmount(input) && input >= BigNumber(0)) {
-		const result = TokenPayment.egldFromBigInteger(input).toPrettyString();
+		let result;
+		try {
+			result = TokenPayment.egldFromBigInteger(input).toPrettyString();
+		} catch {
+			return;
+		}
 
 		const conversion = {
 			type: ConversionTypes.denominatedToAmount,
