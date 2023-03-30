@@ -1,4 +1,4 @@
-import { ConversionTypes } from './conversionTypes';
+import { ConversionTypes } from './types';
 import * as checks from './check';
 import { Address } from '@elrondnetwork/erdjs/out/address';
 import { TokenPayment } from '@elrondnetwork/erdjs/out/tokenPayment';

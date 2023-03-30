@@ -3,7 +3,7 @@ import Card from './Components/Card';
 import FunctionCard from './Components/FunctionCard';
 import ConvertedRow from './Components/ConvertedRow';
 import * as tryConvert from './tryConverts';
-import { conversion } from './conversion';
+import { conversion } from './types';
 import BigNumber from 'bignumber.js';
 
 const ConvertersHandler = () => {
@@ -21,6 +21,7 @@ const ConvertersHandler = () => {
 
 	function* idMaker() {
 		let index = 0;
+
 		while (true) {
 			yield index++;
 		}
@@ -29,23 +30,15 @@ const ConvertersHandler = () => {
 	const gen = idMaker();
 
 	const isBestResult = (result: any, input: any) => {
-		return (
-			displayableResults.filter((res: any) => res.input === input)[0] === result
-		);
+		return displayableResults.filter((res: any) => res.input === input)[0] === result;
 	};
 
 	const hasOnlyOneDisplayableResult = (input: any) => {
-		return (
-			displayableResults.filter((result: any) => result.input === input)
-				.length === 1
-		);
+		return displayableResults.filter((result: any) => result.input === input).length === 1;
 	};
 
 	const hasNoDisplayableResults = (input: any) => {
-		return (
-			displayableResults.filter((result: any) => result.input === input)
-				.length === 0
-		);
+		return displayableResults.filter((result: any) => result.input === input).length === 0;
 	};
 
 	const displayPossibleResults = (input: string) => {
@@ -54,17 +47,15 @@ const ConvertersHandler = () => {
 				<div>
 					{displayableResults
 						.filter((result: { input: string }) => result.input === input)
-						.map(
-							(result: { conversionTypeId: number; resultValue: string }) => {
-								return (
-									<ConvertedRow
-										conversionTypeId={result.conversionTypeId}
-										result={result.resultValue}
-										key={gen.next().value as number}
-									/>
-								);
-							}
-						)}
+						.map((result: { conversionTypeId: number; resultValue: string }) => {
+							return (
+								<ConvertedRow
+									conversionTypeId={result.conversionTypeId}
+									result={result.resultValue}
+									key={gen.next().value as number}
+								/>
+							);
+						})}
 				</div>
 			);
 		}
@@ -74,31 +65,26 @@ const ConvertersHandler = () => {
 				<div key={gen.next().value as number}>
 					<details>
 						{displayableResults
-							.filter(
-								(result: { input: Key | null | undefined }) =>
-									result.input === input
-							)
-							.map(
-								(result: { conversionTypeId: number; resultValue: string }) => {
-									if (isBestResult(result, input)) {
-										return (
-											<summary>
-												<ConvertedRow
-													conversionTypeId={result.conversionTypeId}
-													result={result.resultValue}
-												/>
-											</summary>
-										);
-									} else {
-										return (
+							.filter((result: { input: Key | null | undefined }) => result.input === input)
+							.map((result: { conversionTypeId: number; resultValue: string }) => {
+								if (isBestResult(result, input)) {
+									return (
+										<summary>
 											<ConvertedRow
 												conversionTypeId={result.conversionTypeId}
 												result={result.resultValue}
 											/>
-										);
-									}
+										</summary>
+									);
+								} else {
+									return (
+										<ConvertedRow
+											conversionTypeId={result.conversionTypeId}
+											result={result.resultValue}
+										/>
+									);
 								}
-							)}
+							})}
 					</details>
 				</div>
 			);
@@ -189,12 +175,7 @@ const ConvertersHandler = () => {
 	};
 
 	const unSelectPrevious = () => {
-		if (
-			lastSelected !== -1 &&
-			cardsRefs &&
-			cardsRefs.current[lastSelected] &&
-			cardsRefs.current[lastSelected].current
-		) {
+		if (lastSelected !== -1 && cardsRefs && cardsRefs.current[lastSelected] && cardsRefs.current[lastSelected].current) {
 			const lastSelectedCardRef = cardsRefs.current[lastSelected];
 			const lastSelectedCard = lastSelectedCardRef.current;
 
@@ -206,26 +187,19 @@ const ConvertersHandler = () => {
 		unSelectPrevious();
 
 		if (isSingleMode) return;
-		if (
-			!document ||
-			!document.activeElement ||
-			document.activeElement.tagName !== 'TEXTAREA'
-		)
-			return;
+		if (!document || !document.activeElement || document.activeElement.tagName !== 'TEXTAREA') return;
 		if (!window || !window.getSelection()) return;
 
 		const text = window.getSelection()?.toString();
 		if (!text) return;
 
 		if (text.length > 0) {
-			const startIndex =
-				(document.activeElement as HTMLInputElement).selectionStart || 0;
+			const startIndex = (document.activeElement as HTMLInputElement).selectionStart || 0;
 			const inputArray = input.split(TRANSACTION_SEPARATOR);
 
 			if (!inputArray) return;
 
-			const arrayIndex =
-				input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
+			const arrayIndex = input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
 
 			selectCard(arrayIndex);
 
@@ -234,12 +208,7 @@ const ConvertersHandler = () => {
 	};
 
 	const selectCard = (index: number) => {
-		if (
-			!cardsRefs ||
-			!cardsRefs.current[index] ||
-			!cardsRefs.current[index].current
-		)
-			return;
+		if (!cardsRefs || !cardsRefs.current[index] || !cardsRefs.current[index].current) return;
 
 		cardsRefs.current[index].current.style.backgroundColor = '#242526';
 		cardsRefs.current[index].current.style.borderRadius = '10px';
@@ -259,22 +228,14 @@ const ConvertersHandler = () => {
 
 		selectCard(index);
 		setLastSelected(index);
-		textarea.current.setSelectionRange(
-			startingPos,
-			startingPos + textToSelect.length
-		);
+		textarea.current.setSelectionRange(startingPos, startingPos + textToSelect.length);
 		textarea.current.focus();
 	};
 
 	const addToDisplayableResults = (conversion: conversion | undefined) => {
 		if (!conversion || !conversion.input || !conversion.result) return;
 
-		if (
-			displayableResults.some(
-				(displayableResult: { conversionTypeId: any }) =>
-					displayableResult.conversionTypeId === conversion.type
-			)
-		) {
+		if (displayableResults.some((displayableResult: { conversionTypeId: any }) => displayableResult.conversionTypeId === conversion.type)) {
 			return;
 		}
 
@@ -408,10 +369,7 @@ const ConvertersHandler = () => {
 										placeholder="Insert a value to be converted."
 										onChange={(event) => {
 											setInput(event.target.value);
-											setIsSingleMode(
-												event.target.value.split(TRANSACTION_SEPARATOR)
-													.length === 1
-											);
+											setIsSingleMode(event.target.value.split(TRANSACTION_SEPARATOR).length === 1);
 											setDisplayableResults([]);
 											setIsVisible(event.target.value !== null);
 											resizeTextarea();

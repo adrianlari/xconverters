@@ -1,4 +1,26 @@
-import { ConversionTypes } from './conversionTypes';
+export type conversion = {
+	type: ConversionTypes;
+	input: any;
+	result: any;
+};
+
+export enum ConversionTypes {
+	bech32ToHex,
+	hexToBech32,
+	decimalToHexa,
+	hexaToDecimal,
+	decimalToBase64,
+	base64ToDecimal,
+	amountToDenominated,
+	denominatedToAmount,
+	stringToHexadecimal,
+	hexadecimalToString,
+	stringToBase64,
+	base64ToString,
+	hexadecimalToBase64,
+	base64ToHexadecimal,
+	base64ToHexDecimal,
+}
 
 export const converters = [
 	{

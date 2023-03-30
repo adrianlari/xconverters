@@ -2,11 +2,10 @@ import BigNumber from 'bignumber.js';
 import { Base64 } from 'js-base64';
 
 const bech32AddressLength = 62;
+const hexAddressLength = 64;
 
 export const bech32Address = (input: string) => {
-	if (!input || !input.startsWith('erd1')) {
-		return false;
-	} else if (input.length !== bech32AddressLength) {
+	if (!input || !input.startsWith('erd1') || input.length !== bech32AddressLength) {
 		return false;
 	}
 
@@ -14,7 +13,7 @@ export const bech32Address = (input: string) => {
 };
 
 export const hexAddress = (input: string) => {
-	if (input.length !== 64) {
+	if (input.length !== hexAddressLength) {
 		return false;
 	}
 
@@ -61,14 +60,7 @@ export const hexaEncodedString = (input: string) => {
 };
 
 export const base64EncodedString = (input: string) => {
-	if (
-		!Boolean(
-			input.match(
-				'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
-			)
-		) &&
-		Base64.toBase64(input)
-	) {
+	if (!Boolean(input.match('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$')) && Base64.toBase64(input)) {
 		return false;
 	}
 
