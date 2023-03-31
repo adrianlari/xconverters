@@ -7,7 +7,7 @@ interface ConvertedRowParams {
 }
 
 const ConvertedRow = ({ conversionTypeId, result }: ConvertedRowParams) => {
-	let label = converters.filter((pair: any) => pair.value === conversionTypeId)[0].label;
+	let label = converters.filter((pair) => pair.value === conversionTypeId)[0].label;
 
 	if (!result) return <></>;
 

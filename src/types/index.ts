@@ -1,7 +1,13 @@
-export type conversion = {
+export type Conversion = {
 	type: ConversionTypes;
-	input: any;
-	result: any;
+	input: string;
+	result: string;
+};
+
+export type DisplayableResult = {
+	conversionTypeId: ConversionTypes;
+	resultValue: string;
+	input: string;
 };
 
 export enum ConversionTypes {

@@ -11,7 +11,7 @@ interface ResultRowParams {
 const ResultRow = ({ label, result }: ResultRowParams) => {
 	const [showCheck, setShowCheck] = useState(false);
 
-	const copyToCliboard = async (text: string, event: any) => {
+	const copyToCliboard = async (text: string) => {
 		navigator.clipboard.writeText(text);
 
 		setShowCheck(true);
@@ -20,17 +20,10 @@ const ResultRow = ({ label, result }: ResultRowParams) => {
 	};
 
 	const displayDenominationIfNeeded = () => {
-		if (
-			label.endsWith('Decimal') &&
-			checks.decimal(result) &&
-			result.length > 12 &&
-			result.length < 60
-		) {
+		if (label.endsWith('Decimal') && checks.decimal(result) && result.length > 12 && result.length < 60) {
 			let denomination = '';
 			try {
-				denomination = TokenPayment.egldFromBigInteger(
-					BigNumber(result)
-				).toPrettyString();
+				denomination = TokenPayment.egldFromBigInteger(BigNumber(result)).toPrettyString();
 			} catch {}
 
 			return (
@@ -51,16 +44,14 @@ const ResultRow = ({ label, result }: ResultRowParams) => {
 	return (
 		<div>
 			<div className="row py-3 border-bottom detail-item">
-				<div className="col-lg-3 text-secondary text-lg-right pl-lg-spacer">
-					{label}
-				</div>
+				<div className="col-lg-3 text-secondary text-lg-right pl-lg-spacer">{label}</div>
 				<div className="col pr-lg-spacer">
 					<div className="d-flex align-items-center text-break-all">
 						{result}
 						<div>{displayDenominationIfNeeded()}</div>
 						{/* eslint-disable-next-line*/}
 						<a
-							onClick={(event) => copyToCliboard(result, event)}
+							onClick={() => copyToCliboard(result)}
 							className="side-action fa fa-check-double">
 							<svg
 								style={{ display: showCheck ? 'none' : 'block' }}

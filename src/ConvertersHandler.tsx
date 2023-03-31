@@ -2,15 +2,15 @@ import { createRef, Key, MutableRefObject, useRef, useState } from 'react';
 import Card from './Components/Card';
 import FunctionCard from './Components/FunctionCard';
 import ConvertedRow from './Components/ConvertedRow';
-import * as tryConvert from './tryConverts';
-import { conversion } from './types';
-import BigNumber from 'bignumber.js';
+import { Conversion, DisplayableResult } from './types';
+import { converters } from './tryConverts';
 
 const ConvertersHandler = () => {
 	const [input, setInput] = useState('');
 	const [isVisible, setIsVisible] = useState(false);
 	const [lastSelected, setLastSelected] = useState(-1);
-	const [displayableResults, setDisplayableResults] = useState<any>([]);
+	const [displayableResults, setDisplayableResults] = useState<DisplayableResult[]>([]);
+
 	const textarea = useRef() as MutableRefObject<HTMLTextAreaElement>;
 	const cardsRefs = useRef<any>([]);
 	const [isSingleMode, setIsSingleMode] = useState(false);
@@ -29,16 +29,16 @@ const ConvertersHandler = () => {
 
 	const gen = idMaker();
 
-	const isBestResult = (result: any, input: any) => {
-		return displayableResults.filter((res: any) => res.input === input)[0] === result;
+	const isBestResult = (result: DisplayableResult, input: string) => {
+		return displayableResults.filter((res) => res.input === input)[0] === result;
 	};
 
-	const hasOnlyOneDisplayableResult = (input: any) => {
-		return displayableResults.filter((result: any) => result.input === input).length === 1;
+	const hasOnlyOneDisplayableResult = (input: string) => {
+		return displayableResults.filter((result) => result.input === input).length === 1;
 	};
 
-	const hasNoDisplayableResults = (input: any) => {
-		return displayableResults.filter((result: any) => result.input === input).length === 0;
+	const hasNoDisplayableResults = (input: string) => {
+		return displayableResults.filter((result) => result.input === input).length === 0;
 	};
 
 	const displayPossibleResults = (input: string) => {
@@ -65,8 +65,8 @@ const ConvertersHandler = () => {
 				<div key={gen.next().value as number}>
 					<details>
 						{displayableResults
-							.filter((result: { input: Key | null | undefined }) => result.input === input)
-							.map((result: { conversionTypeId: number; resultValue: string }) => {
+							.filter((result) => result.input === input)
+							.map((result) => {
 								if (isBestResult(result, input)) {
 									return (
 										<summary>
@@ -139,7 +139,7 @@ const ConvertersHandler = () => {
 					<div ref={cardsRefs.current[index]}>
 						<FunctionCard
 							hover={(index: any) => hover(index)}
-							index={index}
+							idx={index}
 							word={inputArray[0]}
 						/>
 					</div>
@@ -199,7 +199,7 @@ const ConvertersHandler = () => {
 
 			if (!inputArray) return;
 
-			const arrayIndex = input.substr(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
+			const arrayIndex = input.slice(0, startIndex).split(TRANSACTION_SEPARATOR).length - 1;
 
 			selectCard(arrayIndex);
 
@@ -232,14 +232,14 @@ const ConvertersHandler = () => {
 		textarea.current.focus();
 	};
 
-	const addToDisplayableResults = (conversion: conversion | undefined) => {
+	const addToDisplayableResults = (conversion: Conversion | undefined) => {
 		if (!conversion || !conversion.input || !conversion.result) return;
 
 		if (displayableResults.some((displayableResult: { conversionTypeId: any }) => displayableResult.conversionTypeId === conversion.type)) {
 			return;
 		}
 
-		setDisplayableResults((oldArray: any) => [
+		setDisplayableResults((oldArray) => [
 			...oldArray,
 			{
 				conversionTypeId: conversion.type,
@@ -252,73 +252,33 @@ const ConvertersHandler = () => {
 	const hexConversions = (hexInput: string) => {
 		if (!hexInput) return;
 
-		let conversion: conversion | undefined;
-		conversion = tryConvert.hexToBech32(hexInput);
+		let conversion: Conversion | undefined;
+
+		conversion = converters.hexToBech32(hexInput);
 		addToDisplayableResults(conversion);
 
-		conversion = tryConvert.hexToString(hexInput);
+		conversion = converters.hexToString(hexInput);
 		addToDisplayableResults(conversion);
 
-		conversion = tryConvert.hexToDecimal(hexInput);
+		conversion = converters.hexToDecimal(hexInput);
 		addToDisplayableResults(conversion);
 
-		conversion = tryConvert.hexToBase64(hexInput);
+		conversion = converters.hexToBase64(hexInput);
 		addToDisplayableResults(conversion);
 	};
 
 	const convertWord = (input: string) => {
 		if (!input) return;
-		let conversion;
 
-		conversion = tryConvert.bech32ToHex(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.hexToBech32(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.decimalToHex(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.hexToDecimal(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.decimalToBase64(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.base64ToDecimal(input);
-		addToDisplayableResults(conversion);
-
-		// suppose we denominate EGLD (18 decimals)
-		conversion = tryConvert.amountToDenominate(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.denominatedToAmount(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.stringToHex(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.hexToString(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.stringToBase64(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.base64ToString(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.hexToBase64(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.base64ToHex(input);
-		addToDisplayableResults(conversion);
-
-		conversion = tryConvert.base64ToHexDecimal(input);
-		addToDisplayableResults(conversion);
+		Object.values(converters).forEach((converter) => {
+			let conversion = converter(input);
+			addToDisplayableResults(conversion);
+		});
 	};
 
 	const clearInput = () => {
 		setInput('');
+
 		if (!textarea || !textarea.current) return;
 
 		textarea.current.focus();
