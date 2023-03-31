@@ -1,11 +1,14 @@
+import { Address } from '@elrondnetwork/erdjs/out/address';
 import BigNumber from 'bignumber.js';
 import { Base64 } from 'js-base64';
 
-const bech32AddressLength = 62;
-const hexAddressLength = 64;
+export const bech32AddressLength = 62;
+export const hexAddressLength = 64;
 
 export const bech32Address = (input: string) => {
-	if (!input || !input.startsWith('erd1') || input.length !== bech32AddressLength) {
+	try {
+		new Address(input).bech32();
+	} catch {
 		return false;
 	}
 
@@ -13,7 +16,9 @@ export const bech32Address = (input: string) => {
 };
 
 export const hexAddress = (input: string) => {
-	if (input.length !== hexAddressLength) {
+	try {
+		new Address(input).bech32();
+	} catch {
 		return false;
 	}
 
@@ -41,14 +46,6 @@ export const base64Value = (input: string) => {
 
 export const amount = (input: BigNumber) => {
 	return !isNaN(input.toNumber());
-};
-
-export const denominatedAmount = (input: BigNumber) => {
-	return !isNaN(input.toNumber());
-};
-
-export const stringValue = (input: any) => {
-	return true;
 };
 
 export const hexaEncodedString = (input: string) => {

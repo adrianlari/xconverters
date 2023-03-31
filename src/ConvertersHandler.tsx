@@ -288,10 +288,11 @@ const ConvertersHandler = () => {
 		conversion = tryConvert.base64ToDecimal(input);
 		addToDisplayableResults(conversion);
 
-		conversion = tryConvert.amountToDenominate(BigNumber(input));
+		// suppose we denominate EGLD (18 decimals)
+		conversion = tryConvert.amountToDenominate(input);
 		addToDisplayableResults(conversion);
 
-		conversion = tryConvert.denominatedToAmount(BigNumber(input));
+		conversion = tryConvert.denominatedToAmount(input);
 		addToDisplayableResults(conversion);
 
 		conversion = tryConvert.stringToHex(input);
