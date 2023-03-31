@@ -1,12 +1,14 @@
+import { Address } from '@elrondnetwork/erdjs/out/address';
 import BigNumber from 'bignumber.js';
 import { Base64 } from 'js-base64';
 
-const bech32AddressLength = 62;
+export const bech32AddressLength = 62;
+export const hexAddressLength = 64;
 
 export const bech32Address = (input: string) => {
-	if (!input || !input.startsWith('erd1')) {
-		return false;
-	} else if (input.length !== bech32AddressLength) {
+	try {
+		new Address(input).bech32();
+	} catch {
 		return false;
 	}
 
@@ -14,7 +16,9 @@ export const bech32Address = (input: string) => {
 };
 
 export const hexAddress = (input: string) => {
-	if (input.length !== 64) {
+	try {
+		new Address(input).bech32();
+	} catch {
 		return false;
 	}
 
@@ -44,14 +48,6 @@ export const amount = (input: BigNumber) => {
 	return !isNaN(input.toNumber());
 };
 
-export const denominatedAmount = (input: BigNumber) => {
-	return !isNaN(input.toNumber());
-};
-
-export const stringValue = (input: any) => {
-	return true;
-};
-
 export const hexaEncodedString = (input: string) => {
 	if (!Boolean(input.match('^[A-Fa-f0-9]+$')) || input.length % 2 !== 0) {
 		return false;
@@ -61,14 +57,7 @@ export const hexaEncodedString = (input: string) => {
 };
 
 export const base64EncodedString = (input: string) => {
-	if (
-		!Boolean(
-			input.match(
-				'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
-			)
-		) &&
-		Base64.toBase64(input)
-	) {
+	if (!Boolean(input.match('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$')) && Base64.toBase64(input)) {
 		return false;
 	}
 

@@ -1,86 +1,86 @@
 .App {
-  text-align: center;
+	text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+	height: 40vmin;
+	pointer-events: none;
 }
 
 .addresses {
-  position: relative;
-  background-color: greenyellow;
+	position: relative;
+	background-color: greenyellow;
 }
 
 .card-header {
-  background-color: red;
+	background-color: red;
 }
 
 summary {
-  display: block;
+	display: block;
 }
 
 summary::marker {
-  display: none;
+	display: none;
 }
 
 summary::-moz-list-bullet {
-  list-style-type: none;
-  display: none;
+	list-style-type: none;
+	display: none;
 }
 
 details > summary::before {
-  content: " ";
-  border: solid #939faa;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 0 8px 8px 0;
-  transform: rotate(-45deg);
-  position: absolute;
-  margin-top: 2%;
-  margin-right: -10%;
+	content: ' ';
+	border: solid #939faa;
+	border-width: 0 2px 2px 0;
+	display: inline-block;
+	padding: 0 8px 8px 0;
+	transform: rotate(-45deg);
+	position: absolute;
+	margin-top: 2%;
+	margin-right: -10%;
 }
 
 details[open] > summary::before {
-  content: " ";
-  border: solid #939faa;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 0 8px 8px 0;
-  transform: rotate(45deg);
+	content: ' ';
+	border: solid #939faa;
+	border-width: 0 2px 2px 0;
+	display: inline-block;
+	padding: 0 8px 8px 0;
+	transform: rotate(45deg);
 }
 
 .arrow {
-  border: solid rgb(255, 255, 255);
-  border-width: 0 3px 3px 0;
-  padding: 5px;
-  position: absolute;
-  right: 0;
-  margin-right: 3%;
-  cursor: pointer;
+	border: solid rgb(255, 255, 255);
+	border-width: 0 3px 3px 0;
+	padding: 5px;
+	position: absolute;
+	right: 0;
+	margin-right: 3%;
+	cursor: pointer;
 }
 
 .arrow.left::selection {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
 }
 
 .left {
-  transform: rotate(135deg);
-  -webkit-transform: rotate(135deg);
+	transform: rotate(135deg);
+	-webkit-transform: rotate(135deg);
 }
 
 .down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
 }
 
 /* #clear-input ::-webkit-search-cancel-button { */
 .clear-input {
-  right: 25px;
-  margin: auto;
-  top: calc(50% - 1em);
-  /* -webkit-appearance: none; */
-  /* height: 3em ; */
-  width: 2em;
+	right: 25px;
+	margin: auto;
+	top: calc(50% - 1em);
+	/* -webkit-appearance: none; */
+	/* height: 3em ; */
+	width: 2rem;
 }
