@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import { test, expect } from 'vitest';
 import { ConversionTypes } from '../types';
 import { converters } from '../tryConverts';
@@ -42,6 +41,11 @@ test('decimal to hex', () => {
 		type: ConversionTypes.decimalToHexa,
 		result: '1f',
 		input: '31',
+	});
+	expect(converters.decimalToHex('44000000000000000000000')).toStrictEqual({
+		type: ConversionTypes.decimalToHexa,
+		result: '09513ea9de0243800000',
+		input: '44000000000000000000000',
 	});
 });
 

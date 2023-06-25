@@ -1,4 +1,4 @@
-import { createRef, Key, MutableRefObject, useRef, useState } from 'react';
+import { createRef, MutableRefObject, useRef, useState } from 'react';
 import Card from './Components/Card';
 import FunctionCard from './Components/FunctionCard';
 import ConvertedRow from './Components/ConvertedRow';

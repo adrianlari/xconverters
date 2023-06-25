@@ -1,8 +1,8 @@
-import './App.css'
+import './App.css';
 import ConvertersHandler from './ConvertersHandler';
 
 const App = () => {
-  return <ConvertersHandler />;
-}
+	return <ConvertersHandler />;
+};
 
-export default App
+export default App;

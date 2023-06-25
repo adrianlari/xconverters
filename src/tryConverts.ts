@@ -26,6 +26,10 @@ const decimalToHex = (input: string) => {
 
 	if (!checks.hexadecimal(result)) return;
 
+	if (result.length % 2 != 0) {
+		result = '0' + result;
+	}
+
 	const conversion = {
 		type: ConversionTypes.decimalToHexa,
 		result,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as checks from '../check';
 import { TokenPayment } from '@elrondnetwork/erdjs/out/tokenPayment';
 import BigNumber from 'bignumber.js';
